@@ -1,1 +1,1 @@
-export const GOOGLE_BOOKS_API_KEY = 'asdf';
+export const GOOGLE_BOOKS_API_KEY = 'AIzaSyC8VCleHTBZz5Ldo3A7S7-0fBM1UzONm4g';
