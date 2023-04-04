@@ -1,14 +1,15 @@
-import { Layout, Text, Button, Icon, useTheme, useStyleSheet } from '@ui-kitten/components';
+import { Layout, Text, Button, Icon, useTheme, useStyleSheet, Input } from '@ui-kitten/components';
 import React, { useContext } from 'react';
 import { FlatList, StyleSheet, Image } from 'react-native';
 
 import { GoogleBookContext, StoredBook, BookSearchResult } from '../Context/GoogleBooks.Context';
 
 const BookList = ({ books }: { books: ArrayLike<StoredBook & BookSearchResult> }) => {
-    const { readingList, toggleReadingList, bookmarkList, toggleBookmarkList } =
+    const { readingList, toggleReadingList, bookmarkList, toggleBookmarkList, editStoredBook } =
         useContext(GoogleBookContext);
     const theme = useTheme();
     const activeFillColor = theme['color-primary-500'];
+    const inactiveFillColor = theme['color-basic-600'];
     const styles = useStyleSheet(themedStyles);
 
     const renderItem = ({ item }: { item: StoredBook & BookSearchResult }) => {
@@ -17,6 +18,9 @@ const BookList = ({ books }: { books: ArrayLike<StoredBook & BookSearchResult> }
         const thumbnail = item?.thumbnail || item?.volumeInfo?.imageLinks?.thumbnail || '';
         const title = item?.title || item?.volumeInfo?.title || '';
         const authors = item?.authors || item?.volumeInfo?.authors || [];
+        console.log('item', item);
+        const pages = item.volumeInfo?.pageCount;
+        const pagesRead = item.customData?.pagesRead || 0;
 
         return (
             <Layout style={styles.bookContainer}>
@@ -28,7 +32,25 @@ const BookList = ({ books }: { books: ArrayLike<StoredBook & BookSearchResult> }
                 )}
                 <Layout style={styles.infoContainer}>
                     <Text style={styles.title}>{title}</Text>
-                    <Text style={styles.authors}>{authors && authors.join(', ')}</Text>
+                    {authors && <Text style={styles.authors}>{authors.join(', ')}</Text>}
+                    {pages && (
+                        <Text style={styles.pages}>
+                            <Input
+                                size='small'
+                                style={styles.pagesReadInput}
+                                textStyle={styles.pagesReadInputText}
+                                value={pagesRead}
+                                onChangeText={(nextValue: string) =>
+                                    editStoredBook(item.id, {
+                                        customData: {
+                                            pagesRead: Math.min(parseInt(nextValue, 10), pages),
+                                        },
+                                    })
+                                }
+                            />
+                            von {pages} Seiten gelesen
+                        </Text>
+                    )}
                 </Layout>
                 <Layout style={styles.actionList}>
                     <Button
@@ -37,7 +59,7 @@ const BookList = ({ books }: { books: ArrayLike<StoredBook & BookSearchResult> }
                         accessoryLeft={
                             <Icon
                                 name={`book-open${insideReadingList ? '' : '-outline'}`}
-                                fill={insideReadingList ? activeFillColor : '#aaa'}
+                                fill={insideReadingList ? activeFillColor : inactiveFillColor}
                                 style={styles.icons}
                             />
                         }
@@ -48,7 +70,7 @@ const BookList = ({ books }: { books: ArrayLike<StoredBook & BookSearchResult> }
                         accessoryLeft={
                             <Icon
                                 name={`bookmark${insideBookmarkList ? '' : '-outline'}`}
-                                fill={insideBookmarkList ? activeFillColor : '#aaa'}
+                                fill={insideBookmarkList ? activeFillColor : inactiveFillColor}
                                 style={styles.icons}
                             />
                         }
@@ -120,6 +142,23 @@ const themedStyles = StyleSheet.create({
     authors: {
         fontSize: 14,
         color: '#777',
+        marginBottom: 16,
+    },
+    pages: {
+        fontSize: 14,
+        borderTopWidth: 1,
+        borderTopColor: '#eee',
+        paddingTop: 16,
+    },
+    pagesReadInput: {
+        marginRight: 8,
+    },
+    pagesReadInputText: {
+        marginHorizontal: 0,
+        paddingTop: 0,
+        minHeight: 0,
+        width: 40,
+        textAlign: 'center',
     },
     iconButton: {
         paddingHorizontal: 0,

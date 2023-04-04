@@ -1,7 +1,8 @@
 import { differenceInDays } from 'date-fns';
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useCallback } from 'react';
 
 import { retrieveData, storeData } from './AsyncStorage';
+import objDeepMerge from '../Helper/objDeepMerge';
 import bookDetailsRequest from '../Requests/bookDetails.request';
 import bookSearchRequest from '../Requests/bookSearch.request';
 
@@ -19,10 +20,12 @@ export type StoredBook = {
         };
         title?: string;
         authors?: string[];
+        pageCount?: number;
     };
     id: string;
     customData?: {
         creationDate?: number;
+        pagesRead?: number;
     };
 };
 type StoredBooks = {
@@ -64,6 +67,10 @@ const GoogleBookContextProvider = ({ children }: { children: string | React.Reac
     const [storedBooks, setStoredBooks] = useState<StoredBooks>({});
     const [timerId, setTimerId] = useState(null);
     const [initialFetched, setInitialFetched] = useState(false);
+
+    useEffect(() => {
+        console.log('stored', storedBooks);
+    }, [storedBooks]);
 
     useEffect(() => {
         const fetchInitialData = async () => {
@@ -127,7 +134,9 @@ const GoogleBookContextProvider = ({ children }: { children: string | React.Reac
                             if (response.data) {
                                 tmpStoredBooks[bookId] = {
                                     ...response.data,
-                                    creationDate: new Date().getTime(),
+                                    customData: {
+                                        creationDate: new Date().getTime(),
+                                    },
                                 };
                             }
 
@@ -225,6 +234,23 @@ const GoogleBookContextProvider = ({ children }: { children: string | React.Reac
         setTimerId(newTimer);
     };
 
+    const editStoredBook = (bookId: string, newData: { [x: string]: any }) => {
+        const bookToEdit = storedBooks[bookId];
+        const newObject = {
+            ...objDeepMerge(storedBooks, {
+                [bookId]: {
+                    ...objDeepMerge(bookToEdit, newData),
+                },
+            }),
+        };
+
+        console.log('edit', newObject);
+
+        setStoredBooks(newObject);
+
+        console.log('after state');
+    };
+
     useEffect(() => {
         searchAction();
     }, [bookSearchQuery]);
@@ -240,6 +266,7 @@ const GoogleBookContextProvider = ({ children }: { children: string | React.Reac
                 bookmarkList,
                 toggleBookmarkList,
                 storedBooks,
+                editStoredBook,
             }}>
             {children}
         </GoogleBookContext.Provider>
