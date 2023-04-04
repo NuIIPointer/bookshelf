@@ -2,7 +2,7 @@ import { Layout, Text } from '@ui-kitten/components';
 import React, { useContext, useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 
-import BookList from '../../Components/BookShelf';
+import BookList from '../../Components/BookShelf/BookShelf';
 import { GoogleBookContext } from '../../Context/GoogleBooks.Context';
 
 export const ReadingListScreen = () => {

@@ -1,39 +1,75 @@
-import { Text, Layout, Input, Button, Icon, useTheme } from '@ui-kitten/components';
+import { Text, Layout, Input, Button, Icon, useTheme, Card } from '@ui-kitten/components';
+import * as dateDFns from 'date-fns';
 import React, { useContext } from 'react';
 import { StyleSheet } from 'react-native';
 
-import BookList from '../../Components/BookShelf';
-import KeyboardAvoidingComponents from '../../Components/KeyboardAvodingComponents';
 import { GoogleBookContext } from '../../Context/GoogleBooks.Context';
 
 export const HomeScreen = () => {
-    const { bookSearchResults, bookSearchQuery, setBookSearchQuery } =
-        useContext(GoogleBookContext);
+    const { storedBooks } = useContext(GoogleBookContext);
     const theme = useTheme();
-    const iconColor = theme['text-alternate-color'];
+
+    const pagesReadTotalList = Object.keys(storedBooks).map((bookId) => {
+        return storedBooks[bookId].customData?.pagesRead;
+    });
+    const pagesReadTotal =
+        pagesReadTotalList.length > 0
+            ? pagesReadTotalList.reduce((a: number, b: number) => {
+                  return (a || 0) + (b || 0);
+              })
+            : 0;
+
+    const pagesReadYearList = Object.keys(storedBooks).map((bookId) => {
+        const creationDate = storedBooks[bookId].customData?.creationDate;
+
+        if (creationDate && dateDFns.isAfter(creationDate, dateDFns.startOfYear(new Date()))) {
+            return storedBooks[bookId].customData?.pagesRead || 0;
+        }
+
+        return 0;
+    });
+    const pagesReadYear =
+        pagesReadYearList.length > 0
+            ? pagesReadYearList.reduce((a: number, b: number) => {
+                  return a + b;
+              })
+            : 0;
+
+    const pagesReadMonthList = Object.keys(storedBooks).map((bookId) => {
+        const creationDate = storedBooks[bookId].customData?.creationDate;
+
+        if (creationDate && dateDFns.isAfter(creationDate, dateDFns.startOfMonth(new Date()))) {
+            return storedBooks[bookId].customData?.pagesRead || 0;
+        }
+
+        return 0;
+    });
+    const pagesReadMonth =
+        pagesReadMonthList.length > 0
+            ? pagesReadMonthList.reduce((a: number, b: number) => {
+                    return a + b;
+                })
+            : 0;
 
     return (
         <>
             <Layout style={styles.tab}>
-                <Text category="h1">Buch-Liste</Text>
-                {/* <ScrollView> */}
-                <BookList books={bookSearchResults} />
-                {/* </ScrollView> */}
+                <Text category="h1" style={{ marginBottom: 16 }}>
+                    Deine Statistik
+                </Text>
+                <Card style={styles.card}>
+                    <Text>Seiten gelesen, gesammt!</Text>
+                    <Text category="h1">{pagesReadTotal}</Text>
+                </Card>
+                <Card style={styles.card}>
+                    <Text>Seiten gelesen, dieses Jahr!</Text>
+                    <Text category="h1">{pagesReadYear}</Text>
+                </Card>
+                <Card style={styles.card}>
+                    <Text>Seiten gelesen, diesen Monat!</Text>
+                    <Text category="h1">{pagesReadMonth}</Text>
+                </Card>
             </Layout>
-            <KeyboardAvoidingComponents>
-                <Layout style={styles.inputWrapper}>
-                    <Input
-                        style={styles.input}
-                        placeholder="Eingabe tätigen"
-                        value={bookSearchQuery}
-                        onChangeText={(nextValue) => setBookSearchQuery(nextValue)}
-                    />
-                    <Button
-                        style={styles.button}
-                        accessoryLeft={<Icon name="search" fill={iconColor} style={styles.icon} />}
-                    />
-                </Layout>
-            </KeyboardAvoidingComponents>
         </>
     );
 };
@@ -45,24 +81,7 @@ const styles = StyleSheet.create({
         paddingBottom: 0,
         flex: 1,
     },
-    inputWrapper: {
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        borderTopColor: '#eee',
-        borderTopWidth: 1,
-        display: 'flex',
-        flexDirection: 'row',
-        gap: 8,
-    },
-    input: {
-        flex: 1,
-    },
-    button: {
-        paddingHorizontal: 2,
-        paddingVertical: 9,
-    },
-    icon: {
-        height: 12,
-        width: 12,
+    card: {
+        marginBottom: 16,
     },
 });

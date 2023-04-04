@@ -7,7 +7,8 @@ const BottomTabBar = ({ navigation, state }: { navigation: any; state: any }) =>
             selectedIndex={state.index}
             onSelect={(index) => navigation.navigate(state.routeNames[index])}>
             <BottomNavigationTab title="Home" />
-            <BottomNavigationTab title="ReadingList" />
+            <BottomNavigationTab title="Suche" />
+            <BottomNavigationTab title="Leseliste" />
         </BottomNavigation>
     );
 };
