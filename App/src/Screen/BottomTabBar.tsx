@@ -1,18 +1,15 @@
 import { BottomNavigation, BottomNavigationTab } from '@ui-kitten/components';
-import React, { useState } from 'react';
-// import { AppContext } from '../Context/App.Context';
+import React from 'react';
 
-export const BottomTabBar = () => {
-    // const { pageIndex, setPageIndex } = useContext(AppContext);
-
-    const [selectedIndex, setSelectedIndex] = useState(0);
-
+const BottomTabBar = ({ navigation, state }: { navigation: any; state: any }) => {
     return (
         <BottomNavigation
-            selectedIndex={selectedIndex}
-            onSelect={(index) => setSelectedIndex(index)}>
-            <BottomNavigationTab title="USERS" />
-            <BottomNavigationTab title="ORDERS" />
+            selectedIndex={state.index}
+            onSelect={(index) => navigation.navigate(state.routeNames[index])}>
+            <BottomNavigationTab title="Home" />
+            <BottomNavigationTab title="ReadingList" />
         </BottomNavigation>
     );
 };
+
+export default BottomTabBar;

@@ -1,21 +1,48 @@
+import { differenceInDays } from 'date-fns';
 import React, { createContext, useState, useEffect } from 'react';
 
 import { retrieveData, storeData } from './AsyncStorage';
 import bookDetailsRequest from '../Requests/bookDetails.request';
 import bookSearchRequest from '../Requests/bookSearch.request';
 
-type BookList = { [x: string]: { creationDate: number } };
-type ReadingList = { [x: string]: { creationDate: number } };
-type StoredBooks = { [x: string]: { [x: string]: unknown } };
-type BookSearchResults = { [x: string]: unknown }[];
+type GoogleBookSearchItem = {
+    creationDate: number;
+};
+type GoogleBookSearchItems = {
+    [x: string]: GoogleBookSearchItem;
+};
+type ReadingListItem = { [x: string]: { creationDate: number } };
+export type StoredBook = {
+    volumeInfo?: {
+        imageLinks: {
+            thumbnail: string;
+        };
+        title?: string;
+        authors?: string[];
+    };
+    id: string;
+    customData?: {
+        creationDate?: number;
+    };
+};
+type StoredBooks = {
+    [x: string]: StoredBook;
+};
+export type BookSearchResult = {
+    title?: string;
+    authors?: string[];
+    thumbnail?: string;
+    id: string;
+};
+type BookSearchResults = BookSearchResult[];
 
 export const GoogleBookContext = createContext<{
     bookSearchQuery?: string;
     setBookSearchQuery: Function;
     bookSearchResults: BookSearchResults;
-    readingList: ReadingList;
+    readingList: ReadingListItem;
     toggleReadingList: Function;
-    bookmarkList: BookList;
+    bookmarkList: GoogleBookSearchItems;
     toggleBookmarkList: Function;
     storedBooks: StoredBooks;
 }>({
@@ -32,20 +59,28 @@ export const GoogleBookContext = createContext<{
 const GoogleBookContextProvider = ({ children }: { children: string | React.ReactNode }) => {
     const [bookSearchQuery, setBookSearchQuery] = useState('der kleine Prinz');
     const [bookSearchResults, setBookSearchResults] = useState<BookSearchResults>([]);
-    const [readingList, setReadingList] = useState<ReadingList>({});
-    const [bookmarkList, setBookmarkList] = useState<BookList>({});
+    const [readingList, setReadingList] = useState<ReadingListItem>({});
+    const [bookmarkList, setBookmarkList] = useState<GoogleBookSearchItems>({});
     const [storedBooks, setStoredBooks] = useState<StoredBooks>({});
     const [timerId, setTimerId] = useState(null);
-
-    console.log('bookmarkList', bookmarkList);
-    console.log('storedBooks', storedBooks);
+    const [initialFetched, setInitialFetched] = useState(false);
 
     useEffect(() => {
         const fetchInitialData = async () => {
-            const bookmarks = await retrieveData('bookmarkList');
-            if (bookmarks) {
-                setBookmarkList(JSON.parse(bookmarks));
+            const tmpBookmarkList = await retrieveData('bookmarkList');
+            if (tmpBookmarkList) {
+                setBookmarkList(JSON.parse(tmpBookmarkList));
             }
+            const tmpReadingList = await retrieveData('readingList');
+            if (tmpReadingList) {
+                setReadingList(JSON.parse(tmpReadingList));
+            }
+            const tmpStoredBooks = await retrieveData('storedBooks');
+            if (tmpStoredBooks) {
+                setStoredBooks(JSON.parse(tmpStoredBooks));
+            }
+
+            setInitialFetched(true);
         };
 
         fetchInitialData();
@@ -53,13 +88,18 @@ const GoogleBookContextProvider = ({ children }: { children: string | React.Reac
 
     // store bookmarks in app storage
     useEffect(() => {
-        storeData('bookmarkList', JSON.stringify(bookmarkList));
-    }, [bookmarkList]);
+        initialFetched && storeData('bookmarkList', JSON.stringify(bookmarkList));
+    }, [bookmarkList, initialFetched]);
 
     // store readingList in app storage
     useEffect(() => {
-        storeData('readingList', JSON.stringify(readingList));
-    }, [readingList]);
+        initialFetched && storeData('readingList', JSON.stringify(readingList));
+    }, [readingList, initialFetched]);
+
+    // store storedBooks in app storage
+    useEffect(() => {
+        initialFetched && storeData('storedBooks', JSON.stringify(storedBooks));
+    }, [storedBooks, initialFetched]);
 
     // store relevant book data
     useEffect(() => {
@@ -74,11 +114,21 @@ const GoogleBookContextProvider = ({ children }: { children: string | React.Reac
             });
 
             const promises = Object.keys(bookIdsToStore).map((bookId) => {
-                if (!storedBooks[bookId]) {
+                const maxDateDiff = 7;
+                if (
+                    !storedBooks[bookId] ||
+                    differenceInDays(
+                        storedBooks[bookId]?.customData?.creationDate || 0,
+                        new Date()
+                    ) > maxDateDiff
+                ) {
                     return new Promise<void>((resolve) => {
                         bookDetailsRequest(bookId).then((response) => {
                             if (response.data) {
-                                tmpStoredBooks[bookId] = response.data;
+                                tmpStoredBooks[bookId] = {
+                                    ...response.data,
+                                    creationDate: new Date().getTime(),
+                                };
                             }
 
                             resolve();
@@ -94,14 +144,14 @@ const GoogleBookContextProvider = ({ children }: { children: string | React.Reac
             });
         };
 
-        storeBooks();
-    }, [storedBooks, bookmarkList, readingList]);
+        initialFetched && storeBooks();
+    }, [initialFetched, storedBooks, bookmarkList, readingList]);
 
     const toggleReadingList = (bookId: string) => {
         if (!readingList[bookId]) {
             setReadingList({ ...readingList, [bookId]: { creationDate: new Date().getTime() } });
         } else {
-            const newBookmarks: ReadingList = {};
+            const newBookmarks: ReadingListItem = {};
             Object.keys(readingList).forEach((e) => {
                 if (e !== bookId) {
                     newBookmarks[e] = readingList[e];
@@ -116,7 +166,7 @@ const GoogleBookContextProvider = ({ children }: { children: string | React.Reac
         if (!bookmarkList[bookId]) {
             setBookmarkList({ ...bookmarkList, [bookId]: { creationDate: new Date().getTime() } });
         } else {
-            const newBookmarks: BookList = {};
+            const newBookmarks: GoogleBookSearchItems = {};
             Object.keys(bookmarkList).forEach((e) => {
                 if (e !== bookId) {
                     newBookmarks[e] = bookmarkList[e];

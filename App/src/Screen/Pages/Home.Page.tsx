@@ -1,35 +1,68 @@
-import { Text, Layout, Input } from '@ui-kitten/components';
+import { Text, Layout, Input, Button, Icon, useTheme } from '@ui-kitten/components';
 import React, { useContext } from 'react';
 import { StyleSheet } from 'react-native';
 
 import BookList from '../../Components/BookShelf';
+import KeyboardAvoidingComponents from '../../Components/KeyboardAvodingComponents';
 import { GoogleBookContext } from '../../Context/GoogleBooks.Context';
 
 export const HomeScreen = () => {
     const { bookSearchResults, bookSearchQuery, setBookSearchQuery } =
         useContext(GoogleBookContext);
-    console.log('bookSearchResults', bookSearchResults.length);
+    const theme = useTheme();
+    const iconColor = theme['text-alternate-color'];
 
     return (
-        <Layout style={styles.tab}>
-            <Text category="h1" style={{ marginBottom: 16 }}>
-                Buch-Liste
-            </Text>
-            <Input
-                placeholder="EIngabe tätigen"
-                value={bookSearchQuery}
-                onChangeText={(nextValue) => setBookSearchQuery(nextValue)}
-            />
-            <BookList books={bookSearchResults} />
-        </Layout>
+        <>
+            <Layout style={styles.tab}>
+                <Text category="h1">Buch-Liste</Text>
+                {/* <ScrollView> */}
+                <BookList books={bookSearchResults} />
+                {/* </ScrollView> */}
+            </Layout>
+            <KeyboardAvoidingComponents>
+                <Layout style={styles.inputWrapper}>
+                    <Input
+                        style={styles.input}
+                        placeholder="Eingabe tätigen"
+                        value={bookSearchQuery}
+                        onChangeText={(nextValue) => setBookSearchQuery(nextValue)}
+                    />
+                    <Button
+                        style={styles.button}
+                        accessoryLeft={<Icon name="search" fill={iconColor} style={styles.icon} />}
+                    />
+                </Layout>
+            </KeyboardAvoidingComponents>
+        </>
     );
 };
 
 const styles = StyleSheet.create({
     tab: {
-        padding: 16,
-        paddingTop: 75,
-        height: 800,
+        paddingHorizontal: 16,
+        paddingTop: 24,
+        paddingBottom: 0,
         flex: 1,
+    },
+    inputWrapper: {
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        borderTopColor: '#eee',
+        borderTopWidth: 1,
+        display: 'flex',
+        flexDirection: 'row',
+        gap: 8,
+    },
+    input: {
+        flex: 1,
+    },
+    button: {
+        paddingHorizontal: 2,
+        paddingVertical: 9,
+    },
+    icon: {
+        height: 12,
+        width: 12,
     },
 });

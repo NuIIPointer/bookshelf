@@ -1,26 +1,28 @@
-import { Layout, Text, Button, Icon, useTheme } from '@ui-kitten/components';
+import { Layout, Text, Button, Icon, useTheme, useStyleSheet } from '@ui-kitten/components';
 import React, { useContext } from 'react';
 import { FlatList, StyleSheet, Image } from 'react-native';
 
-import { GoogleBookContext } from '../Context/GoogleBooks.Context';
+import { GoogleBookContext, StoredBook, BookSearchResult } from '../Context/GoogleBooks.Context';
 
-const BookList = ({ books }) => {
+const BookList = ({ books }: { books: ArrayLike<StoredBook & BookSearchResult> }) => {
     const { readingList, toggleReadingList, bookmarkList, toggleBookmarkList } =
         useContext(GoogleBookContext);
     const theme = useTheme();
     const activeFillColor = theme['color-primary-500'];
+    const styles = useStyleSheet(themedStyles);
 
-    const renderItem = ({ item }) => {
+    const renderItem = ({ item }: { item: StoredBook & BookSearchResult }) => {
         const insideReadingList = !!readingList[item.id];
         const insideBookmarkList = !!bookmarkList[item.id];
-        const thumbnail = item.thumbnail || item.volumeInfo?.imageLinks?.thumbnail;
-        const title = item.title || item.volumeInfo?.title;
-        const authors = item.authors || item.volumeInfo?.authors;
+        const thumbnail = item?.thumbnail || item?.volumeInfo?.imageLinks?.thumbnail || '';
+        const title = item?.title || item?.volumeInfo?.title || '';
+        const authors = item?.authors || item?.volumeInfo?.authors || [];
 
         return (
             <Layout style={styles.bookContainer}>
                 {thumbnail && (
                     <Layout style={styles.thumbnailWrapper}>
+                        {/* @ts-ignore: correct soruce structure */}
                         <Image style={styles.thumbnail} source={{ uri: thumbnail }} />
                     </Layout>
                 )}
@@ -63,17 +65,23 @@ const BookList = ({ books }) => {
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id}
                 contentContainerStyle={styles.listContainer}
+                style={styles.bookList}
             />
         </Layout>
     );
 };
 
-const styles = StyleSheet.create({
+const themedStyles = StyleSheet.create({
     container: {
         flex: 1,
+        marginTop: 16,
+    },
+    bookList: {
+        paddingHorizontal: 14, // scrollbar offset for web
+        marginHorizontal: -14,
     },
     listContainer: {
-        marginTop: 16,
+        // marginTop: 16,
     },
     bookContainer: {
         display: 'flex',
@@ -105,7 +113,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
     },
     title: {
-        fontSize: 15,
+        fontSize: 16,
         fontWeight: 'bold',
         marginBottom: 5,
     },

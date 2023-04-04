@@ -41,8 +41,7 @@ export const ReadingListScreen = () => {
 const styles = StyleSheet.create({
     tab: {
         padding: 16,
-        paddingTop: 75,
-        height: 800,
+        paddingTop: 24,
         flex: 1,
     },
 });
