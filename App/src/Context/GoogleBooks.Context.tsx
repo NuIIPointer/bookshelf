@@ -196,7 +196,7 @@ const GoogleBookContextProvider = ({ children }: { children: string | React.Reac
     const searchAction = () => {
         const doRequest = () => {
             const searchParams = {
-                q: `intitle:${bookSearchQuery}`, // Suchbegriff
+                q: `${bookSearchQuery}`, // Suchbegriff
                 maxResults: 20, // maximale Anzahl von Suchergebnissen
                 printType: 'books', // nur Bücher anzeigen
                 langRestrict: 'de',

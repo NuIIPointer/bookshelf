@@ -1,6 +1,6 @@
 import { Text, Layout, Card } from '@ui-kitten/components';
 import * as dateDFns from 'date-fns';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { LineChart, Grid } from 'react-native-svg-charts';
 

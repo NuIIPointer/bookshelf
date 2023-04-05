@@ -1,6 +1,7 @@
 import { Text, Layout, Input, Button, Icon, useTheme } from '@ui-kitten/components';
 import React, { useContext } from 'react';
 import { StyleSheet } from 'react-native';
+import BarcodeScanner from '../../Components/BarcodeScanner/BarcodeScanner';
 
 import BookList from '../../Components/BookShelf/BookShelf';
 import KeyboardAvoidingComponents from '../../Components/KeyboardAvodingComponents';
@@ -30,6 +31,7 @@ export const SearchScreen = () => {
                         style={styles.button}
                         accessoryLeft={<Icon name="search" fill={iconColor} style={styles.icon} />}
                     />
+                    <BarcodeScanner setCode={(data) => setBookSearchQuery(data)} />
                 </Layout>
             </KeyboardAvoidingComponents>
         </>
