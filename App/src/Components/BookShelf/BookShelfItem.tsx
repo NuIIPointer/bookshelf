@@ -1,11 +1,20 @@
-import { Layout, Text, Button, Icon, useTheme, useStyleSheet, Input } from '@ui-kitten/components';
-import React, { useContext } from 'react';
+import { Layout, Text, Button, Icon, useTheme, useStyleSheet } from '@ui-kitten/components';
+import React, { useContext, useMemo } from 'react';
 import { StyleSheet, Image } from 'react-native';
 
 import { GoogleBookContext, StoredBook, BookSearchResult } from '../../Context/GoogleBooks.Context';
+import intArraySum from '../../Helper/intArraySum';
+import useStoredPageRecentReadingValue from '../../Helper/useStoredPageRecentReadingValue';
+import ProgressBar from '../ProgressBar/ProgressBar';
 
-const BookListItem = ({ item }: { item: StoredBook & BookSearchResult }) => {
-    const { readingList, toggleReadingList, bookmarkList, toggleBookmarkList, editStoredBook } =
+const BookListItem = ({
+    item,
+    onModalClick,
+}: {
+    item: StoredBook & BookSearchResult;
+    onModalClick: Function;
+}) => {
+    const { readingList, toggleReadingList, bookmarkList, toggleBookmarkList } =
         useContext(GoogleBookContext);
     const theme = useTheme();
     const activeFillColor = theme['color-primary-500'];
@@ -17,8 +26,11 @@ const BookListItem = ({ item }: { item: StoredBook & BookSearchResult }) => {
     const thumbnail = item?.thumbnail || item?.volumeInfo?.imageLinks?.thumbnail || '';
     const title = item?.title || item?.volumeInfo?.title || '';
     const authors = item?.authors || item?.volumeInfo?.authors || [];
-    const pages = item.volumeInfo?.pageCount;
-    const pagesRead = item.customData?.pagesRead || 0;
+    const pages = item.volumeInfo?.pageCount || 0;
+
+    const pagesRead = useStoredPageRecentReadingValue(item.id);
+
+    console.log('pagesRead', pagesRead, pages);
 
     return (
         <Layout style={styles.bookContainer}>
@@ -30,49 +42,60 @@ const BookListItem = ({ item }: { item: StoredBook & BookSearchResult }) => {
             )}
             <Layout style={styles.infoContainer}>
                 <Text style={styles.title}>{title}</Text>
-                {authors && <Text style={styles.authors}>{authors.join(', ')}</Text>}
-                {pages && (
-                    <Text style={styles.pages}>
-                        <Input
-                            size="small"
-                            style={styles.pagesReadInput}
-                            textStyle={styles.pagesReadInputText}
-                            value={pagesRead}
-                            onChangeText={(nextValue: string) =>
-                                editStoredBook(item.id, {
-                                    customData: {
-                                        pagesRead: Math.min(parseInt(nextValue, 10), pages),
-                                    },
-                                })
-                            }
-                        />
-                        von {pages} Seiten gelesen
-                    </Text>
-                )}
+                {authors ? <Text style={styles.authors}>{authors.join(', ')}</Text> : null}
+                {pages ? (
+                    <>
+                        <Layout style={styles.pagesWrapper}>
+                            <Text style={styles.pagesText}>
+                                {pagesRead} von {pages} Seiten gelesen
+                            </Text>
+                            <Button
+                                onPress={() => onModalClick(item.id)}
+                                style={styles.editPagesButton}
+                                accessoryLeft={() => (
+                                    <Icon
+                                        name="edit"
+                                        fill={inactiveFillColor}
+                                        style={styles.icons}
+                                    />
+                                )}
+                            />
+                        </Layout>
+                    </>
+                ) : null}
             </Layout>
             <Layout style={styles.actionList}>
                 <Button
                     onPress={() => toggleReadingList(item.id)}
                     style={styles.iconButton}
-                    accessoryLeft={
+                    accessoryLeft={() => (
                         <Icon
                             name={`book-open${insideReadingList ? '' : '-outline'}`}
                             fill={insideReadingList ? activeFillColor : inactiveFillColor}
                             style={styles.icons}
                         />
-                    }
+                    )}
                 />
                 <Button
                     onPress={() => toggleBookmarkList(item.id)}
                     style={styles.iconButton}
-                    accessoryLeft={
+                    accessoryLeft={() => (
                         <Icon
                             name={`bookmark${insideBookmarkList ? '' : '-outline'}`}
                             fill={insideBookmarkList ? activeFillColor : inactiveFillColor}
                             style={styles.icons}
                         />
-                    }
+                    )}
                 />
+            </Layout>
+            <Layout style={styles.progressContainer}>
+                {pages ? (
+                    <ProgressBar
+                        current={(pagesRead / pages) * 100}
+                        outerStyle={{ borderWidth: 0, borderRadius: 2, backgroundColor: '#ddd' }}
+                        innerStyle={{ height: 4 }}
+                    />
+                ) : null}
             </Layout>
         </Layout>
     );
@@ -80,21 +103,25 @@ const BookListItem = ({ item }: { item: StoredBook & BookSearchResult }) => {
 
 const themedStyles = StyleSheet.create({
     bookContainer: {
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'flex-start',
-        marginLeft: 24,
         marginBottom: 16,
-        padding: 20,
-        paddingRight: 4,
         borderColor: '#eee',
         borderWidth: 1,
         borderRadius: 6,
         backgroundColor: '#fafafa',
+        display: 'flex',
+        flexWrap: 'wrap',
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        marginLeft: 24,
+        paddingTop: 24,
+    },
+    progressContainer: {
+        width: '100%',
+        marginTop: 16,
     },
     thumbnailWrapper: {
-        marginLeft: -45,
-        marginRight: 16,
+        marginLeft: -29,
+        marginRight: 20,
         borderRadius: 6,
         overflow: 'hidden',
         borderWidth: 1,
@@ -107,6 +134,7 @@ const themedStyles = StyleSheet.create({
     infoContainer: {
         flex: 1,
         backgroundColor: 'transparent',
+        marginRight: 4,
     },
     title: {
         fontSize: 16,
@@ -118,12 +146,18 @@ const themedStyles = StyleSheet.create({
         color: '#777',
         marginBottom: 16,
     },
-    pages: {
-        fontSize: 14,
+    pagesWrapper: {
+        display: 'flex',
+        alignItems: 'center',
+        flexDirection: 'row',
         borderTopWidth: 1,
-        borderTopColor: '#eee',
+        borderTopColor: '#ddd',
         paddingTop: 16,
         marginRight: 8,
+        backgroundColor: 'transparent',
+    },
+    pagesText: {
+        fontSize: 14,
     },
     pagesReadInput: {
         marginRight: 8,
@@ -139,7 +173,30 @@ const themedStyles = StyleSheet.create({
         textAlign: 'center',
     },
     iconButton: {
-        paddingHorizontal: 0,
+        backgroundColor: 'transparent',
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        margin: 0,
+        border: 'none',
+        borderWidth: 0,
+        borderColor: 'none',
+        minHeight: 0,
+        minWidth: 0,
+    },
+    icons: {
+        width: 18,
+        height: 18,
+        margin: 0,
+    },
+    actionList: {
+        display: 'flex',
+        flexDirection: 'column',
+        margin: 0,
+        marginTop: -8,
+        backgroundColor: 'transparent',
+    },
+    editPagesButton: {
+        paddingHorizontal: 4,
         paddingVertical: 0,
         backgroundColor: 'transparent',
         margin: 0,
@@ -149,17 +206,6 @@ const themedStyles = StyleSheet.create({
         minHeight: 0,
         minWidth: 0,
         height: 30,
-    },
-    icons: {
-        width: 12,
-        height: 12,
-        margin: 0,
-    },
-    actionList: {
-        display: 'flex',
-        flexDirection: 'column',
-        marginTop: -4,
-        backgroundColor: 'transparent',
     },
 });
 

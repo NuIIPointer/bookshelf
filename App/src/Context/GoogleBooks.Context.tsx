@@ -1,4 +1,5 @@
 import { differenceInDays } from 'date-fns';
+import * as dateFns from 'date-fns';
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 
 import { retrieveData, storeData } from './AsyncStorage';
@@ -22,10 +23,12 @@ export type StoredBook = {
         authors?: string[];
         pageCount?: number;
     };
-    id: string;
+    id?: string;
     customData?: {
         creationDate?: number;
-        pagesRead?: number;
+        pagesRead?: {
+            [x: string]: number;
+        };
     };
 };
 type StoredBooks = {
@@ -41,13 +44,15 @@ type BookSearchResults = BookSearchResult[];
 
 export const GoogleBookContext = createContext<{
     bookSearchQuery?: string;
-    setBookSearchQuery: Function;
     bookSearchResults: BookSearchResults;
     readingList: ReadingListItem;
-    toggleReadingList: Function;
     bookmarkList: GoogleBookSearchItems;
-    toggleBookmarkList: Function;
     storedBooks: StoredBooks;
+    setBookSearchQuery: Function;
+    toggleReadingList: Function;
+    toggleBookmarkList: Function;
+    addPagesReadToBook: Function;
+    editStoredBook: Function;
 }>({
     bookSearchQuery: '',
     readingList: {},
@@ -57,6 +62,8 @@ export const GoogleBookContext = createContext<{
     toggleReadingList: () => {},
     setBookSearchQuery: () => {},
     toggleBookmarkList: () => {},
+    addPagesReadToBook: () => {},
+    editStoredBook: () => {},
 });
 
 const GoogleBookContextProvider = ({ children }: { children: string | React.ReactNode }) => {
@@ -234,22 +241,37 @@ const GoogleBookContextProvider = ({ children }: { children: string | React.Reac
         setTimerId(newTimer);
     };
 
-    const editStoredBook = (bookId: string, newData: { [x: string]: any }) => {
-        const bookToEdit = storedBooks[bookId];
-        const newObject = {
-            ...objDeepMerge(storedBooks, {
-                [bookId]: {
-                    ...objDeepMerge(bookToEdit, newData),
+    const editStoredBook = useCallback(
+        (bookId: string, newData: StoredBook) => {
+            const bookToEdit = storedBooks[bookId];
+            const newObject: StoredBooks = {
+                ...objDeepMerge(storedBooks, {
+                    [bookId]: {
+                        ...objDeepMerge(bookToEdit, newData),
+                    },
+                }),
+            };
+
+            setStoredBooks(newObject);
+        },
+        [storedBooks]
+    );
+
+    const addPagesReadToBook = useCallback(
+        (bookId: string, pages: number, date: Date = new Date()) => {
+            const dateString = date.toISOString().split('T')[0];
+            const newData: StoredBook = {
+                customData: {
+                    pagesRead: {
+                        [dateString]: pages,
+                    },
                 },
-            }),
-        };
+            };
 
-        console.log('edit', newObject);
-
-        setStoredBooks(newObject);
-
-        console.log('after state');
-    };
+            editStoredBook(bookId, newData);
+        },
+        [editStoredBook]
+    );
 
     useEffect(() => {
         searchAction();
@@ -267,6 +289,7 @@ const GoogleBookContextProvider = ({ children }: { children: string | React.Reac
                 toggleBookmarkList,
                 storedBooks,
                 editStoredBook,
+                addPagesReadToBook,
             }}>
             {children}
         </GoogleBookContext.Provider>

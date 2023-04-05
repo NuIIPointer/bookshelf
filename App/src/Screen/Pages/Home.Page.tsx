@@ -1,55 +1,67 @@
-import { Text, Layout, Input, Button, Icon, useTheme, Card } from '@ui-kitten/components';
+import { Text, Layout, Card } from '@ui-kitten/components';
 import * as dateDFns from 'date-fns';
 import React, { useContext } from 'react';
-import { StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
+import { LineChart, Grid } from 'react-native-svg-charts';
 
 import { GoogleBookContext } from '../../Context/GoogleBooks.Context';
+import intArraySum from '../../Helper/intArraySum';
 
 export const HomeScreen = () => {
     const { storedBooks } = useContext(GoogleBookContext);
-    const theme = useTheme();
 
     const pagesReadTotalList = Object.keys(storedBooks).map((bookId) => {
-        return storedBooks[bookId].customData?.pagesRead;
+        const pagesRead = storedBooks[bookId].customData?.pagesRead || {};
+        const pagesReadValues = Object.keys(pagesRead)
+            .sort()
+            .map((key) => pagesRead[key]);
+
+        return pagesReadValues[pagesReadValues.length - 1];
     });
-    const pagesReadTotal =
-        pagesReadTotalList.length > 0
-            ? pagesReadTotalList.reduce((a: number, b: number) => {
-                  return (a || 0) + (b || 0);
-              })
-            : 0;
+    const pagesReadTotal = intArraySum(pagesReadTotalList);
 
     const pagesReadYearList = Object.keys(storedBooks).map((bookId) => {
-        const creationDate = storedBooks[bookId].customData?.creationDate;
+        const pagesRead = storedBooks[bookId].customData?.pagesRead || {};
+        const filteredKeys = Object.keys(pagesRead)
+            .filter((dateKey) => {
+                return dateDFns.isAfter(new Date(dateKey), dateDFns.startOfYear(new Date()));
+            })
+            .sort();
 
-        if (creationDate && dateDFns.isAfter(creationDate, dateDFns.startOfYear(new Date()))) {
-            return storedBooks[bookId].customData?.pagesRead || 0;
-        }
+        const mostRecentKey = filteredKeys[filteredKeys.length - 1];
 
-        return 0;
+        return pagesRead[mostRecentKey];
     });
-    const pagesReadYear =
-        pagesReadYearList.length > 0
-            ? pagesReadYearList.reduce((a: number, b: number) => {
-                  return a + b;
-              })
-            : 0;
+    const pagesReadYear = intArraySum(pagesReadYearList);
 
     const pagesReadMonthList = Object.keys(storedBooks).map((bookId) => {
-        const creationDate = storedBooks[bookId].customData?.creationDate;
+        const pagesRead = storedBooks[bookId].customData?.pagesRead || {};
+        const filteredKeys = Object.keys(pagesRead)
+            .filter((dateKey) => {
+                return dateDFns.isAfter(new Date(dateKey), dateDFns.startOfMonth(new Date()));
+            })
+            .sort();
 
-        if (creationDate && dateDFns.isAfter(creationDate, dateDFns.startOfMonth(new Date()))) {
-            return storedBooks[bookId].customData?.pagesRead || 0;
-        }
+        const mostRecentKey = filteredKeys[filteredKeys.length - 1];
 
-        return 0;
+        return pagesRead[mostRecentKey];
     });
-    const pagesReadMonth =
-        pagesReadMonthList.length > 0
-            ? pagesReadMonthList.reduce((a: number, b: number) => {
-                    return a + b;
-                })
-            : 0;
+    const pagesReadMonth = intArraySum(pagesReadMonthList);
+
+    const pagesReadPerDay: { [x: string]: number } = {};
+    Object.keys(storedBooks).forEach((bookId) => {
+        const pagesRead = storedBooks[bookId].customData?.pagesRead || {};
+        const filteredKeys = Object.keys(pagesRead)
+            .filter((dateKey) => {
+                return dateDFns.isAfter(new Date(dateKey), dateDFns.startOfMonth(new Date()));
+            })
+            .sort();
+
+        filteredKeys.forEach((key: string) => {
+            pagesReadPerDay[key] = (pagesReadPerDay[key] || 0) + pagesRead[key];
+        });
+    });
+    const chartValues = Object.keys(pagesReadPerDay).map((key) => pagesReadPerDay[key]);
 
     return (
         <>
@@ -57,18 +69,31 @@ export const HomeScreen = () => {
                 <Text category="h1" style={{ marginBottom: 16 }}>
                     Deine Statistik
                 </Text>
-                <Card style={styles.card}>
-                    <Text>Seiten gelesen, gesammt!</Text>
-                    <Text category="h1">{pagesReadTotal}</Text>
-                </Card>
-                <Card style={styles.card}>
-                    <Text>Seiten gelesen, dieses Jahr!</Text>
-                    <Text category="h1">{pagesReadYear}</Text>
-                </Card>
-                <Card style={styles.card}>
-                    <Text>Seiten gelesen, diesen Monat!</Text>
-                    <Text category="h1">{pagesReadMonth}</Text>
-                </Card>
+                <ScrollView>
+                    <Layout style={styles.cardWrapper}>
+                        <Card style={styles.card}>
+                            <Text style={styles.cardText}>Seiten gelesen, gesammt!</Text>
+                            <Text category="h1">{pagesReadTotal}</Text>
+                        </Card>
+                        <Card style={styles.card}>
+                            <Text style={styles.cardText}>Seiten gelesen, dieses Jahr!</Text>
+                            <Text category="h1">{pagesReadYear}</Text>
+                        </Card>
+                        <Card style={styles.card}>
+                            <Text style={styles.cardText}>Seiten gelesen, diesen Monat!</Text>
+                            <Text category="h1">{pagesReadMonth}</Text>
+                        </Card>
+                        <Layout style={{ width: '100%' }}>
+                            <LineChart
+                                style={{ height: 200 }}
+                                data={chartValues}
+                                svg={{ stroke: 'rgb(134, 65, 244)' }}
+                                contentInset={{ top: 20, bottom: 20 }}>
+                                <Grid />
+                            </LineChart>
+                        </Layout>
+                    </Layout>
+                </ScrollView>
             </Layout>
         </>
     );
@@ -81,7 +106,20 @@ const styles = StyleSheet.create({
         paddingBottom: 0,
         flex: 1,
     },
+    cardWrapper: {
+        display: 'flex',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 16,
+    },
     card: {
-        marginBottom: 16,
+        flexGrow: 1,
+        flexBasis: '40%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+    },
+    cardText: {
+        marginBottom: 4,
     },
 });
