@@ -1,7 +1,7 @@
 import { Layout, useTheme, Text, Icon, Modal, Card, Button } from '@ui-kitten/components';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import React, { useState, useEffect, useCallback } from 'react';
-import { Keyboard, Platform } from 'react-native';
+import { Keyboard, Platform, StyleSheet } from 'react-native';
 
 const BarcodeScanner = ({ setCode }: { setCode: Function }) => {
     const theme = useTheme();
@@ -52,8 +52,7 @@ const BarcodeScanner = ({ setCode }: { setCode: Function }) => {
             <Modal
                 visible={openModal}
                 onBackdropPress={() => setOpenModal(false)}
-                // backdropStyle={styles.modalBackdrop}
-            >
+                backdropStyle={styles.modalBackdrop}>
                 <Card>
                     <Layout>
                         <BarCodeScanner
@@ -66,5 +65,11 @@ const BarcodeScanner = ({ setCode }: { setCode: Function }) => {
         </>
     );
 };
+
+const styles = StyleSheet.create({
+    modalBackdrop: {
+        backgroundColor: 'rgba(0,0,0,0.25)',
+    },
+});
 
 export default BarcodeScanner;

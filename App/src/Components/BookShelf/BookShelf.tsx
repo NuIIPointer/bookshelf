@@ -115,6 +115,7 @@ const themedStyles = StyleSheet.create({
     container: {
         flex: 1,
         marginTop: 16,
+        paddingBottom: 0,
     },
     bookList: {
         paddingHorizontal: 14, // scrollbar offset for web

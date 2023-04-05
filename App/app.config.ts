@@ -10,6 +10,8 @@ const config: ExpoConfig = {
     slug: 'BookShelf',
     extra: {
         googleBooksApiKey: process.env.GOOGLE_BOOKS_API_KEY,
+        openAiKey: process.env.OPEN_AI_KEY,
+        openAiOrg: process.env.OPEN_AI_ORG,
         eas: {
             projectId: '0f41a5ef-9961-4a02-aa55-5d0ef7105e7b',
         },

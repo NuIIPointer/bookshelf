@@ -1,5 +1,4 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Icon } from '@ui-kitten/components';
 import React from 'react';
 
 import BottomTabBar from './BottomTabBar';

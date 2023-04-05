@@ -1,4 +1,4 @@
-import { Text, Layout, Input, Button, Icon, useTheme } from '@ui-kitten/components';
+import { Text, Layout, Input, Button, Icon, useTheme, Spinner } from '@ui-kitten/components';
 import React, { useCallback, useContext, useState, useEffect, useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 
@@ -8,7 +8,7 @@ import KeyboardAvoidingComponents from '../../Components/KeyboardAvodingComponen
 import { GoogleBookContext } from '../../Context/GoogleBooks.Context';
 
 export const SearchScreen = () => {
-    const { bookSearchResults, bookSearchQuery, setBookSearchQuery } =
+    const { bookSearchResults, bookSearchQuery, setBookSearchQuery, bookSearchLoading } =
         useContext(GoogleBookContext);
     const [inputValue, setInputValue] = useState(bookSearchQuery);
     const theme = useTheme();
@@ -30,11 +30,21 @@ export const SearchScreen = () => {
         return <BarcodeScanner setCode={(data: string) => setInputValue(data)} />;
     }, []);
 
+    const pageContent = useMemo(() => {
+        return bookSearchLoading ? (
+            <Layout style={styles.spinnerWrapper}>
+                <Spinner size="giant" />
+            </Layout>
+        ) : (
+            renderBookList
+        );
+    }, [bookSearchLoading, renderBookList]);
+
     return (
         <>
             <Layout style={styles.tab}>
                 <Text category="h1">Buch-Liste</Text>
-                {renderBookList}
+                {pageContent}
             </Layout>
             <KeyboardAvoidingComponents>
                 <Layout style={styles.inputWrapper}>
@@ -47,8 +57,15 @@ export const SearchScreen = () => {
                     />
                     <Button
                         onPress={onPress}
+                        disabled={bookSearchLoading}
                         style={styles.button}
-                        accessoryLeft={<Icon name="search" fill={iconColor} style={styles.icon} />}
+                        accessoryLeft={
+                            <Icon
+                                name={bookSearchLoading ? 'clock-outline' : 'search'}
+                                fill={iconColor}
+                                style={styles.icon}
+                            />
+                        }
                     />
                     {renderBarcodeScanner}
                 </Layout>
@@ -60,9 +77,16 @@ export const SearchScreen = () => {
 const styles = StyleSheet.create({
     tab: {
         paddingHorizontal: 16,
-        paddingTop: 24,
         paddingBottom: 0,
+        paddingTop: 24,
         flex: 1,
+    },
+    spinnerWrapper: {
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 64,
     },
     inputWrapper: {
         paddingHorizontal: 16,

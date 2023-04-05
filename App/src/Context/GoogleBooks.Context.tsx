@@ -1,5 +1,6 @@
+import axios from 'axios';
 import { differenceInDays } from 'date-fns';
-import React, { createContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useState, useEffect, useCallback, useRef } from 'react';
 
 import { retrieveData, storeData } from './AsyncStorage';
 import objDeepMerge from '../Helper/objDeepMerge';
@@ -52,8 +53,10 @@ export const GoogleBookContext = createContext<{
     toggleBookmarkList: Function;
     addPagesReadToBook: Function;
     editStoredBook: Function;
+    bookSearchLoading: boolean;
 }>({
     bookSearchQuery: '',
+    bookSearchLoading: false,
     readingList: {},
     storedBooks: {},
     bookmarkList: {},
@@ -66,17 +69,13 @@ export const GoogleBookContext = createContext<{
 });
 
 const GoogleBookContextProvider = ({ children }: { children: string | React.ReactNode }) => {
-    const [bookSearchQuery, setBookSearchQuery] = useState(null);
+    const [bookSearchQuery, setBookSearchQuery] = useState(undefined);
     const [bookSearchResults, setBookSearchResults] = useState<BookSearchResults>([]);
     const [readingList, setReadingList] = useState<ReadingListItem>({});
     const [bookmarkList, setBookmarkList] = useState<GoogleBookSearchItems>({});
     const [storedBooks, setStoredBooks] = useState<StoredBooks>({});
-    const [timerId, setTimerId] = useState(null);
     const [initialFetched, setInitialFetched] = useState(false);
-
-    useEffect(() => {
-        console.log('stored');
-    }, [storedBooks]);
+    const [bookSearchLoading, setBookSearchLoading] = useState(false);
 
     useEffect(() => {
         const fetchInitialData = async () => {
@@ -162,38 +161,52 @@ const GoogleBookContextProvider = ({ children }: { children: string | React.Reac
         initialFetched && storeBooks();
     }, [initialFetched, storedBooks, bookmarkList, readingList]);
 
-    const toggleReadingList = (bookId: string) => {
-        if (!readingList[bookId]) {
-            setReadingList({ ...readingList, [bookId]: { creationDate: new Date().getTime() } });
-        } else {
-            const newBookmarks: ReadingListItem = {};
-            Object.keys(readingList).forEach((e) => {
-                if (e !== bookId) {
-                    newBookmarks[e] = readingList[e];
-                }
-            });
+    const toggleReadingList = useCallback(
+        (bookId: string) => {
+            if (!readingList[bookId]) {
+                setReadingList({
+                    ...readingList,
+                    [bookId]: { creationDate: new Date().getTime() },
+                });
+            } else {
+                const newBookmarks: ReadingListItem = {};
+                Object.keys(readingList).forEach((e) => {
+                    if (e !== bookId) {
+                        newBookmarks[e] = readingList[e];
+                    }
+                });
 
-            setReadingList(newBookmarks);
-        }
-    };
+                setReadingList(newBookmarks);
+            }
+        },
+        [readingList]
+    );
 
-    const toggleBookmarkList = (bookId: string) => {
-        if (!bookmarkList[bookId]) {
-            setBookmarkList({ ...bookmarkList, [bookId]: { creationDate: new Date().getTime() } });
-        } else {
-            const newBookmarks: GoogleBookSearchItems = {};
-            Object.keys(bookmarkList).forEach((e) => {
-                if (e !== bookId) {
-                    newBookmarks[e] = bookmarkList[e];
-                }
-            });
+    const toggleBookmarkList = useCallback(
+        (bookId: string) => {
+            if (!bookmarkList[bookId]) {
+                setBookmarkList({
+                    ...bookmarkList,
+                    [bookId]: { creationDate: new Date().getTime() },
+                });
+            } else {
+                const newBookmarks: GoogleBookSearchItems = {};
+                Object.keys(bookmarkList).forEach((e) => {
+                    if (e !== bookId) {
+                        newBookmarks[e] = bookmarkList[e];
+                    }
+                });
 
-            setBookmarkList(newBookmarks);
-        }
-    };
+                setBookmarkList(newBookmarks);
+            }
+        },
+        [bookmarkList]
+    );
 
-    const searchAction = () => {
+    const searchAction = useCallback(() => {
         const doRequest = () => {
+            setBookSearchLoading(true);
+
             const searchParams = {
                 q: `${bookSearchQuery}`, // Suchbegriff
                 maxResults: 20, // maximale Anzahl von Suchergebnissen
@@ -224,21 +237,17 @@ const GoogleBookContextProvider = ({ children }: { children: string | React.Reac
                         (book: any) => !!book.thumbnail && !!book.authors
                     );
 
+                    setBookSearchLoading(false);
                     setBookSearchResults(filteredBooks);
                 })
                 .catch((error) => {
                     console.log(error);
+                    setBookSearchLoading(false);
                 });
         };
-        // If a timer is already running, clear it
-        if (timerId) {
-            clearTimeout(timerId);
-        }
 
-        const newTimer: any = setTimeout(doRequest, 1000);
-
-        setTimerId(newTimer);
-    };
+        doRequest();
+    }, [bookSearchQuery]);
 
     const editStoredBook = useCallback(
         (bookId: string, newData: StoredBook) => {
@@ -273,8 +282,8 @@ const GoogleBookContextProvider = ({ children }: { children: string | React.Reac
     );
 
     useEffect(() => {
-        bookSearchQuery !== null && searchAction();
-    }, [bookSearchQuery]);
+        !!bookSearchQuery && searchAction();
+    }, [bookSearchQuery, searchAction]);
 
     return (
         <GoogleBookContext.Provider
@@ -289,6 +298,7 @@ const GoogleBookContextProvider = ({ children }: { children: string | React.Reac
                 storedBooks,
                 editStoredBook,
                 addPagesReadToBook,
+                bookSearchLoading,
             }}>
             {children}
         </GoogleBookContext.Provider>
