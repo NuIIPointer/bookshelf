@@ -1,8 +1,8 @@
 import { Text, Layout, Input, Button, Icon, useTheme } from '@ui-kitten/components';
-import React, { useContext } from 'react';
+import React, { useCallback, useContext, useState, useEffect, useMemo } from 'react';
 import { StyleSheet } from 'react-native';
-import BarcodeScanner from '../../Components/BarcodeScanner/BarcodeScanner';
 
+import BarcodeScanner from '../../Components/BarcodeScanner/BarcodeScanner';
 import BookList from '../../Components/BookShelf/BookShelf';
 import KeyboardAvoidingComponents from '../../Components/KeyboardAvodingComponents';
 import { GoogleBookContext } from '../../Context/GoogleBooks.Context';
@@ -10,28 +10,47 @@ import { GoogleBookContext } from '../../Context/GoogleBooks.Context';
 export const SearchScreen = () => {
     const { bookSearchResults, bookSearchQuery, setBookSearchQuery } =
         useContext(GoogleBookContext);
+    const [inputValue, setInputValue] = useState(bookSearchQuery);
     const theme = useTheme();
     const iconColor = theme['text-alternate-color'];
+
+    useEffect(() => {
+        console.log('change bookSearchResults');
+    }, [bookSearchResults]);
+
+    const onPress = useCallback(() => {
+        setBookSearchQuery(inputValue);
+    }, [setBookSearchQuery, inputValue]);
+
+    const renderBookList = useMemo(() => {
+        return <BookList books={bookSearchResults} />;
+    }, [bookSearchResults]);
+
+    const renderBarcodeScanner = useMemo(() => {
+        return <BarcodeScanner setCode={(data: string) => setInputValue(data)} />;
+    }, []);
 
     return (
         <>
             <Layout style={styles.tab}>
                 <Text category="h1">Buch-Liste</Text>
-                <BookList books={bookSearchResults} />
+                {renderBookList}
             </Layout>
             <KeyboardAvoidingComponents>
                 <Layout style={styles.inputWrapper}>
                     <Input
+                        size="large"
                         style={styles.input}
                         placeholder="Eingabe tätigen"
-                        value={bookSearchQuery}
-                        onChangeText={(nextValue) => setBookSearchQuery(nextValue)}
+                        value={inputValue}
+                        onChangeText={(nextValue) => setInputValue(nextValue)}
                     />
                     <Button
+                        onPress={onPress}
                         style={styles.button}
                         accessoryLeft={<Icon name="search" fill={iconColor} style={styles.icon} />}
                     />
-                    <BarcodeScanner setCode={(data) => setBookSearchQuery(data)} />
+                    {renderBarcodeScanner}
                 </Layout>
             </KeyboardAvoidingComponents>
         </>
@@ -60,6 +79,7 @@ const styles = StyleSheet.create({
     button: {
         paddingHorizontal: 2,
         paddingVertical: 9,
+        zIndex: 100000,
     },
     icon: {
         height: 12,

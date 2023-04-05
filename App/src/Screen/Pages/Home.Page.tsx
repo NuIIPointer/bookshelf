@@ -1,6 +1,6 @@
 import { Text, Layout, Card } from '@ui-kitten/components';
 import * as dateDFns from 'date-fns';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { LineChart, Grid } from 'react-native-svg-charts';
 
@@ -10,58 +10,79 @@ import intArraySum from '../../Helper/intArraySum';
 export const HomeScreen = () => {
     const { storedBooks } = useContext(GoogleBookContext);
 
-    const pagesReadTotalList = Object.keys(storedBooks).map((bookId) => {
-        const pagesRead = storedBooks[bookId].customData?.pagesRead || {};
-        const pagesReadValues = Object.keys(pagesRead)
-            .sort()
-            .map((key) => pagesRead[key]);
+    const pagesReadTotalList = useMemo(
+        () =>
+            Object.keys(storedBooks).map((bookId) => {
+                const pagesRead = storedBooks[bookId].customData?.pagesRead || {};
+                const pagesReadValues = Object.keys(pagesRead)
+                    .sort()
+                    .map((key) => pagesRead[key]);
 
-        return pagesReadValues[pagesReadValues.length - 1];
-    });
-    const pagesReadTotal = intArraySum(pagesReadTotalList);
+                return pagesReadValues[pagesReadValues.length - 1];
+            }),
+        [storedBooks]
+    );
+    const pagesReadTotal = useMemo(() => intArraySum(pagesReadTotalList), [pagesReadTotalList]);
 
-    const pagesReadYearList = Object.keys(storedBooks).map((bookId) => {
-        const pagesRead = storedBooks[bookId].customData?.pagesRead || {};
-        const filteredKeys = Object.keys(pagesRead)
-            .filter((dateKey) => {
-                return dateDFns.isAfter(new Date(dateKey), dateDFns.startOfYear(new Date()));
-            })
-            .sort();
+    const pagesReadYearList = useMemo(
+        () =>
+            Object.keys(storedBooks).map((bookId) => {
+                const pagesRead = storedBooks[bookId].customData?.pagesRead || {};
+                const filteredKeys = Object.keys(pagesRead)
+                    .filter((dateKey) => {
+                        return dateDFns.isAfter(
+                            new Date(dateKey),
+                            dateDFns.startOfYear(new Date())
+                        );
+                    })
+                    .sort();
 
-        const mostRecentKey = filteredKeys[filteredKeys.length - 1];
+                const mostRecentKey = filteredKeys[filteredKeys.length - 1];
 
-        return pagesRead[mostRecentKey];
-    });
-    const pagesReadYear = intArraySum(pagesReadYearList);
+                return pagesRead[mostRecentKey];
+            }),
+        [storedBooks]
+    );
+    const pagesReadYear = useMemo(() => intArraySum(pagesReadYearList), [pagesReadYearList]);
 
-    const pagesReadMonthList = Object.keys(storedBooks).map((bookId) => {
-        const pagesRead = storedBooks[bookId].customData?.pagesRead || {};
-        const filteredKeys = Object.keys(pagesRead)
-            .filter((dateKey) => {
-                return dateDFns.isAfter(new Date(dateKey), dateDFns.startOfMonth(new Date()));
-            })
-            .sort();
+    const pagesReadMonthList = useMemo(
+        () =>
+            Object.keys(storedBooks).map((bookId) => {
+                const pagesRead = storedBooks[bookId].customData?.pagesRead || {};
+                const filteredKeys = Object.keys(pagesRead)
+                    .filter((dateKey) => {
+                        return dateDFns.isAfter(
+                            new Date(dateKey),
+                            dateDFns.startOfMonth(new Date())
+                        );
+                    })
+                    .sort();
 
-        const mostRecentKey = filteredKeys[filteredKeys.length - 1];
+                const mostRecentKey = filteredKeys[filteredKeys.length - 1];
 
-        return pagesRead[mostRecentKey];
-    });
-    const pagesReadMonth = intArraySum(pagesReadMonthList);
+                return pagesRead[mostRecentKey];
+            }),
+        [storedBooks]
+    );
+    const pagesReadMonth = useMemo(() => intArraySum(pagesReadMonthList), [pagesReadMonthList]);
 
-    const pagesReadPerDay: { [x: string]: number } = {};
-    Object.keys(storedBooks).forEach((bookId) => {
-        const pagesRead = storedBooks[bookId].customData?.pagesRead || {};
-        const filteredKeys = Object.keys(pagesRead)
-            .filter((dateKey) => {
-                return dateDFns.isAfter(new Date(dateKey), dateDFns.startOfMonth(new Date()));
-            })
-            .sort();
+    const chartValues = useMemo(() => {
+        const pagesReadPerDay: { [x: string]: number } = {};
+        Object.keys(storedBooks).forEach((bookId) => {
+            const pagesRead = storedBooks[bookId].customData?.pagesRead || {};
+            const filteredKeys = Object.keys(pagesRead)
+                .filter((dateKey) => {
+                    return dateDFns.isAfter(new Date(dateKey), dateDFns.startOfMonth(new Date()));
+                })
+                .sort();
 
-        filteredKeys.forEach((key: string) => {
-            pagesReadPerDay[key] = (pagesReadPerDay[key] || 0) + pagesRead[key];
+            filteredKeys.forEach((key: string) => {
+                pagesReadPerDay[key] = (pagesReadPerDay[key] || 0) + pagesRead[key];
+            });
         });
-    });
-    const chartValues = Object.keys(pagesReadPerDay).map((key) => pagesReadPerDay[key]);
+
+        return Object.keys(pagesReadPerDay).map((key) => pagesReadPerDay[key]);
+    }, [storedBooks]);
 
     return (
         <>

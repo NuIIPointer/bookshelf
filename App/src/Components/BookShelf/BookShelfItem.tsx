@@ -30,8 +30,6 @@ const BookListItem = ({
 
     const pagesRead = useStoredPageRecentReadingValue(item.id);
 
-    console.log('pagesRead', pagesRead, pages);
-
     return (
         <Layout style={styles.bookContainer}>
             {thumbnail && (

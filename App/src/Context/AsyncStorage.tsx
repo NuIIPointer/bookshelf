@@ -9,7 +9,7 @@ export const storeData = async (key: string, value: string, store = '@GlobalStor
     }
 };
 
-export const retrieveData = async (key: string, store: string = '@GlobalStore') => {
+export const retrieveData = async (key: string, store = '@GlobalStore') => {
     try {
         const value = await AsyncStorage.getItem(`${store}:${key}`);
         return value;

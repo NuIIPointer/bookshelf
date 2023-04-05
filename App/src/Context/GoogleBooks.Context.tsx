@@ -1,5 +1,4 @@
 import { differenceInDays } from 'date-fns';
-import * as dateFns from 'date-fns';
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 
 import { retrieveData, storeData } from './AsyncStorage';
@@ -67,7 +66,7 @@ export const GoogleBookContext = createContext<{
 });
 
 const GoogleBookContextProvider = ({ children }: { children: string | React.ReactNode }) => {
-    const [bookSearchQuery, setBookSearchQuery] = useState('der kleine Prinz');
+    const [bookSearchQuery, setBookSearchQuery] = useState(null);
     const [bookSearchResults, setBookSearchResults] = useState<BookSearchResults>([]);
     const [readingList, setReadingList] = useState<ReadingListItem>({});
     const [bookmarkList, setBookmarkList] = useState<GoogleBookSearchItems>({});
@@ -76,7 +75,7 @@ const GoogleBookContextProvider = ({ children }: { children: string | React.Reac
     const [initialFetched, setInitialFetched] = useState(false);
 
     useEffect(() => {
-        console.log('stored', storedBooks);
+        console.log('stored');
     }, [storedBooks]);
 
     useEffect(() => {
@@ -274,7 +273,7 @@ const GoogleBookContextProvider = ({ children }: { children: string | React.Reac
     );
 
     useEffect(() => {
-        searchAction();
+        bookSearchQuery !== null && searchAction();
     }, [bookSearchQuery]);
 
     return (

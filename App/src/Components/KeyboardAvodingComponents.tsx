@@ -7,10 +7,9 @@ const KeyboardAvoidingComponents = ({ children }: { children: any }) => {
     return (
         <KeyboardAvoidingView
             keyboardVerticalOffset={height}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                {children}
-            </TouchableWithoutFeedback>
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+            {children}
         </KeyboardAvoidingView>
     );
 };

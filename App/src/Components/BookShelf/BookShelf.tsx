@@ -20,6 +20,8 @@ const BookList = ({ books }: { books: ArrayLike<StoredBook & BookSearchResult> }
     const { storedBooks, addPagesReadToBook } = useContext(GoogleBookContext);
     const book: StoredBook | null = openModalBookId ? storedBooks[openModalBookId] : null;
 
+    console.log('rerender list');
+
     const pagesRead = useMemo(() => {
         const keys = Object.keys(book?.customData?.pagesRead || {});
         const lastKey = keys[keys.length - 1];
@@ -37,15 +39,15 @@ const BookList = ({ books }: { books: ArrayLike<StoredBook & BookSearchResult> }
         (value: string) => {
             value && addPagesReadToBook(openModalBookId, Math.min(parseInt(value, 10)));
         },
-        [openModalBookId]
+        [addPagesReadToBook, openModalBookId]
     );
 
-    const closeModal = () => {
+    const closeModal = useCallback(() => {
         onInputSubmit(pagesInputValue);
         setOpenModalBookId(null);
-    };
+    }, [onInputSubmit, pagesInputValue]);
 
-    const modalRendered = useMemo(() => {
+    const renderModal = useMemo(() => {
         const bookTitle = book?.volumeInfo?.title || '';
 
         return (
@@ -60,7 +62,7 @@ const BookList = ({ books }: { books: ArrayLike<StoredBook & BookSearchResult> }
                     <Text style={styles.pagesModalText}>{bookTitle}</Text>
                     <Layout style={styles.pagesModalInput}>
                         <Input
-                            size="small"
+                            size="large"
                             value={pagesInputValue}
                             style={styles.pagesInput}
                             onChangeText={(nextValue: string) => {
@@ -68,7 +70,7 @@ const BookList = ({ books }: { books: ArrayLike<StoredBook & BookSearchResult> }
                             }}
                         />
                         <Button
-                            size="small"
+                            size="large"
                             accessoryLeft={() => (
                                 <Icon
                                     name="checkmark"
@@ -82,25 +84,29 @@ const BookList = ({ books }: { books: ArrayLike<StoredBook & BookSearchResult> }
                 </Card>
             </Modal>
         );
-    }, [openModalBookId, storedBooks, pagesInputValue]);
+    }, [book?.volumeInfo?.title, openModalBookId, closeModal, styles, pagesInputValue]);
 
-    return (
-        <Layout style={styles.container}>
+    const onModalClick = useCallback((bookId: string) => {
+        setOpenModalBookId(bookId);
+    }, []);
+
+    const renderList = useMemo(() => {
+        return (
             <FlatList
                 data={books}
-                renderItem={({ item }) => (
-                    <BookListItem
-                        item={item}
-                        key={item.id}
-                        onModalClick={(bookId: string) => setOpenModalBookId(bookId)}
-                    />
-                )}
+                renderItem={({ item }) => <BookListItem item={item} onModalClick={onModalClick} />}
                 keyExtractor={(item) => item.id}
                 contentContainerStyle={styles.listContainer}
                 style={styles.bookList}
                 removeClippedSubviews={false}
             />
-            {modalRendered}
+        );
+    }, [books, onModalClick, styles]);
+
+    return (
+        <Layout style={styles.container}>
+            {renderList}
+            {renderModal}
         </Layout>
     );
 };
@@ -118,8 +124,7 @@ const themedStyles = StyleSheet.create({
         // marginTop: 16,
     },
     modalBackdrop: {
-        backgroundColor: 'black',
-        opacity: 0.25,
+        backgroundColor: 'rgba(0,0,0,0.25)',
     },
     pagesModalHeadline: {
         marginBottom: 4,
