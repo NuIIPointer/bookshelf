@@ -87,30 +87,21 @@ export const HomeScreen = () => {
     }, [storedBooks]);
 
     return (
-        <>
-            <Layout style={styles.tab}>
-                <Text category="h1" style={{ marginBottom: 32 }}>
-                    Meine Statistik
-                </Text>
-                <ScrollView style={styles.scrollView}>
+        <Layout style={{ flex: 1 }}>
+            <ScrollView style={styles.scrollView}>
+                <Layout style={styles.tab}>
+                    <Text category="h1" style={styles.headline}>
+                        Meine Statistik
+                    </Text>
                     <Layout style={styles.cardWrapper}>
                         <Layout style={styles.card}>
-                            <DashboardCard
-                                description="Seiten gelesen, gesammt!"
-                                boldText={pagesReadTotal}
-                            />
+                            <DashboardCard description="Gesamt" boldText={pagesReadTotal} />
                         </Layout>
                         <Layout style={styles.card}>
-                            <DashboardCard
-                                description="Seiten gelesen, dieses Jahr!"
-                                boldText={pagesReadYear}
-                            />
+                            <DashboardCard description="Jahr" boldText={pagesReadYear} />
                         </Layout>
                         <Layout style={styles.card}>
-                            <DashboardCard
-                                description="Seiten gelesen, diesen Monat!"
-                                boldText={pagesReadMonth}
-                            />
+                            <DashboardCard description="Monat" boldText={pagesReadMonth} />
                         </Layout>
                         <Layout style={styles.card} />
                         <Layout style={{ width: '100%' }}>
@@ -123,9 +114,9 @@ export const HomeScreen = () => {
                             </LineChart>
                         </Layout>
                     </Layout>
-                </ScrollView>
-            </Layout>
-        </>
+                </Layout>
+            </ScrollView>
+        </Layout>
     );
 };
 
@@ -140,6 +131,10 @@ const themedStyles = StyleSheet.create({
         paddingBottom: 0,
         flex: 1,
         backgroundColor: 'color-primary-500',
+    },
+    headline: {
+        fontSize: 50,
+        marginBottom: 32,
     },
     card: {
         flexBasis: '34%',

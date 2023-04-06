@@ -38,63 +38,55 @@ const BookListItem = ({
                     <Image style={styles.thumbnail} source={{ uri: thumbnail }} />
                 </Layout>
             )}
-            <Layout style={styles.contentWrap}>
-                <ImageBackground
-                    source={{ uri: thumbnail }}
-                    resizeMode="cover"
-                    style={styles.imageBackground}
-                    blurRadius={30}
-                />
-                <Layout style={styles.infoContainer}>
-                    <Text style={styles.title}>
-                        {titleShortened}
-                        {titleShortened !== title ? '...' : ''}
-                    </Text>
-                    {authors ? <Text style={styles.authors}>{authors.join(', ')}</Text> : null}
-                    {pages ? (
-                        <>
-                            <Layout style={styles.pagesWrapper}>
-                                <Text style={styles.pagesText}>
-                                    {pagesRead} von {pages} Seiten gelesen | {pagesPercentage}%
-                                </Text>
-                                <Button
-                                    onPress={() => onModalClick(item.id)}
-                                    style={styles.editPagesButton}
-                                    accessoryLeft={() => (
-                                        <Icon
-                                            name="edit"
-                                            fill={inactiveFillColor}
-                                            style={styles.icons}
-                                        />
-                                    )}
-                                />
-                            </Layout>
-                        </>
-                    ) : null}
-                    <Layout style={styles.actionList}>
-                        <Button
-                            onPress={() => toggleReadingList(item.id)}
-                            style={styles.iconButton}
-                            accessoryLeft={() => (
-                                <Icon
-                                    name={`book-open${insideReadingList ? '' : '-outline'}`}
-                                    fill={insideReadingList ? activeFillColor : inactiveFillColor}
-                                    style={styles.icons}
-                                />
-                            )}
-                        />
-                        <Button
-                            onPress={() => toggleBookmarkList(item.id)}
-                            style={styles.iconButton}
-                            accessoryLeft={() => (
-                                <Icon
-                                    name={`bookmark${insideBookmarkList ? '' : '-outline'}`}
-                                    fill={insideBookmarkList ? activeFillColor : inactiveFillColor}
-                                    style={styles.icons}
-                                />
-                            )}
-                        />
-                    </Layout>
+            <Layout style={styles.infoContainer}>
+                <Text style={styles.title}>
+                    {titleShortened}
+                    {titleShortened !== title ? '...' : ''}
+                </Text>
+                {authors ? <Text style={styles.authors}>{authors.join(', ')}</Text> : null}
+                {pages ? (
+                    <>
+                        <Layout style={styles.pagesWrapper}>
+                            <Text style={styles.pagesText}>
+                                {pagesRead} von {pages} Seiten gelesen | {pagesPercentage}%
+                            </Text>
+                            <Button
+                                onPress={() => onModalClick(item.id)}
+                                style={styles.editPagesButton}
+                                accessoryLeft={() => (
+                                    <Icon
+                                        name="edit"
+                                        fill={inactiveFillColor}
+                                        style={styles.icons}
+                                    />
+                                )}
+                            />
+                        </Layout>
+                    </>
+                ) : null}
+                <Layout style={styles.actionList}>
+                    <Button
+                        onPress={() => toggleReadingList(item.id)}
+                        style={styles.iconButton}
+                        accessoryLeft={() => (
+                            <Icon
+                                name={`book-open${insideReadingList ? '' : '-outline'}`}
+                                fill={insideReadingList ? activeFillColor : inactiveFillColor}
+                                style={styles.icons}
+                            />
+                        )}
+                    />
+                    <Button
+                        onPress={() => toggleBookmarkList(item.id)}
+                        style={styles.iconButton}
+                        accessoryLeft={() => (
+                            <Icon
+                                name={`bookmark${insideBookmarkList ? '' : '-outline'}`}
+                                fill={insideBookmarkList ? activeFillColor : inactiveFillColor}
+                                style={styles.icons}
+                            />
+                        )}
+                    />
                 </Layout>
                 <Layout style={styles.progressContainer}>
                     {pages ? (
@@ -116,36 +108,17 @@ const BookListItem = ({
 
 const themedStyles = StyleSheet.create({
     bookContainer: {
-        paddingLeft: 48,
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        marginBottom: 32,
     },
-    contentWrap: {
-        overflow: 'hidden',
-        backgroundColor: 'white',
-        marginBottom: 16,
-        borderRadius: 16,
-        borderColor: '#eee',
-        borderWidth: 1,
-    },
-    imageBackground: {
-        margin: -32,
-        paddingHorizontal: 32,
-        paddingTop: 48,
-        position: 'absolute',
-        height: '120%',
-        width: '120%',
-        opacity: 0.4,
-    },
-    progressContainer: {
-        width: '100%',
-    },
+    // progressContainer: {
+    //     width: '100%',
+    // },
     thumbnailWrapper: {
-        borderWidth: 2,
-        borderColor: '#eee',
-        zIndex: 1,
-        marginTop: 24,
-        position: 'absolute',
-        top: 0,
-        left: 0,
+        borderWidth: 4,
+        borderColor: 'color-basic-100',
         shadowOpacity: 0.25,
         shadowRadius: 10,
         borderRadius: 12,
@@ -157,22 +130,18 @@ const themedStyles = StyleSheet.create({
     },
     infoContainer: {
         flex: 1,
-        backgroundColor: 'transparent',
-        paddingTop: 40,
-        paddingRight: 24,
-        paddingLeft: 132,
-        paddingBottom: 24,
+        padding: 24,
+        paddingRight: 0,
         borderRadius: 6,
-        minHeight: 244,
     },
     title: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 5,
     },
     authors: {
         fontSize: 14,
-        color: 'black',
+        color: 'color-primary-200',
         marginBottom: 16,
     },
     pagesWrapper: {
@@ -180,7 +149,7 @@ const themedStyles = StyleSheet.create({
         alignItems: 'flex-start',
         flexDirection: 'row',
         borderTopWidth: 1,
-        borderTopColor: 'rgba(0,0,0,0.25)',
+        borderTopColor: 'color-primary-400',
         paddingTop: 16,
         marginRight: 8,
         backgroundColor: 'transparent',

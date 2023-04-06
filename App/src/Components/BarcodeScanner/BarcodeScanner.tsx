@@ -88,6 +88,7 @@ const themedStyles = StyleSheet.create({
     },
     button: {
         backgroundColor: 'color-basic-100',
+        paddingHorizontal: 4,
     },
 });
 

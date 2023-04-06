@@ -1,11 +1,17 @@
-import { BottomNavigation, BottomNavigationTab, Icon, useStyleSheet, useTheme } from '@ui-kitten/components';
+import {
+    BottomNavigation,
+    BottomNavigationTab,
+    Icon,
+    useStyleSheet,
+    useTheme,
+} from '@ui-kitten/components';
 import React from 'react';
 import { StyleSheet } from 'react-native';
 
 const RenderIcon = ({ icon, ...otherProps }: { icon: string }) => {
     const theme = useTheme();
 
-    return <Icon fill={theme['color-basic-100']} name={icon} {...otherProps} />;
+    return <Icon fill={theme['color-primary-500']} name={icon} {...otherProps} />;
 };
 
 const BottomTabBar = ({ navigation, state }: { navigation: any; state: any }) => {
@@ -28,10 +34,10 @@ const themedStyles = StyleSheet.create({
     bottomNavigation: {
         paddingBottom: 32,
         paddingTop: 16,
-        backgroundColor: 'color-primary-500',
+        backgroundColor: 'color-basic-100',
     },
     indicator: {
-        backgroundColor: 'color-basic-100',
+        backgroundColor: 'color-primary-500',
     },
 });
 

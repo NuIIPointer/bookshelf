@@ -6,14 +6,18 @@ const DashboardCard = ({
     description = 'foo',
     boldText,
     colorStart = 'color-basic-100',
-    colorEnd = 'color-secondary-200',
-    textColor = 'color-primary-600',
+    colorEnd = 'color-basic-100',
+    textColor = 'color-secondary-500',
+    borderColor = 'color-secondary-500',
+    borderWidth = 0,
 }: {
     description: string;
     boldText: string | number;
     colorStart?: string;
     colorEnd?: string;
     textColor?: string;
+    borderColor?: string;
+    borderWidth?: number;
 }) => {
     const theme = useTheme();
     // const styles = useStyleSheet(themedStyles);
@@ -21,11 +25,18 @@ const DashboardCard = ({
     const colorEndMap = theme[colorEnd] || colorEnd;
     const textColorMap = theme[textColor] || textColor;
     const largeTextCharCount = boldText.toString().length;
-    const fontSizeMap = [80, 75, 60, 40];
+    const fontSizeMap = [65, 65, 55, 40];
     const fontSize = fontSizeMap[largeTextCharCount - 1];
+    const borderColorMap = theme[borderColor] || borderColor;
 
     return (
-        <Layout style={styles.cardOuter}>
+        <Layout
+            style={{
+                ...styles.cardOuter,
+                borderWidth,
+                borderColor: borderColorMap,
+                backgroundColor: borderColorMap,
+            }}>
             <Layout style={styles.cardInner}>
                 <LinearGradient
                     colors={[colorStartMap, colorEndMap]}
@@ -55,7 +66,6 @@ const DashboardCard = ({
 const styles = StyleSheet.create({
     cardOuter: {
         borderRadius: 16,
-        backgroundColor: 'transparent',
         shadowOpacity: 0.3,
         shadowRadius: 10,
         shadowOffset: {
@@ -67,7 +77,7 @@ const styles = StyleSheet.create({
         // fontSize: 60,
     },
     cardInner: {
-        borderRadius: 16,
+        borderRadius: 12,
         overflow: 'hidden',
         backgroundColor: 'transparent',
         padding: 16,
@@ -91,6 +101,8 @@ const styles = StyleSheet.create({
     cardText: {
         backgroundColor: 'transparent',
         zIndex: 1,
+        fontSize: 26,
+        fontWeight: 300,
     },
 });
 

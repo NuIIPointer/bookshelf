@@ -28,6 +28,8 @@
     "expo-splash-screen": "^0.18.1",
     "expo-status-bar": "~1.4.4",
     "fs": "^0.0.1-security",
+    "hyphenation.de": "^0.2.1",
+    "hypher": "^0.2.5",
     "lottie-react-native": "5.1.4",
     "openai": "^3.2.1",
     "os": "^0.1.2",

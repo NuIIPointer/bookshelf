@@ -95,17 +95,10 @@ const BookList = ({ books }: { books: ArrayLike<StoredBook & BookSearchResult> }
             return <Lottie source={lottieReading} autoPlay loop />;
         }
 
-        return (
-            <FlatList
-                data={books}
-                renderItem={({ item }) => <BookListItem item={item} onModalClick={onModalClick} />}
-                keyExtractor={(item) => item.id}
-                contentContainerStyle={styles.listContainer}
-                style={styles.bookList}
-                removeClippedSubviews={false}
-            />
-        );
-    }, [books, onModalClick, styles]);
+        return books.map((singleBook: StoredBook & BookSearchResult) => (
+            <BookListItem item={singleBook} key={singleBook.id} onModalClick={onModalClick} />
+        ));
+    }, [books, onModalClick]);
 
     return (
         <Layout style={styles.container}>
@@ -120,10 +113,6 @@ const themedStyles = StyleSheet.create({
         flex: 1,
         marginTop: 16,
         paddingBottom: 0,
-    },
-    bookList: {
-        paddingHorizontal: 14, // scrollbar offset for web
-        marginHorizontal: -14,
     },
     listContainer: {
         // marginTop: 16,

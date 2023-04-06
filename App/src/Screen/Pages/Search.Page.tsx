@@ -9,7 +9,7 @@ import {
     useStyleSheet,
 } from '@ui-kitten/components';
 import React, { useCallback, useContext, useState, useEffect, useMemo } from 'react';
-import { StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 
 import BarcodeScanner from '../../Components/BarcodeScanner/BarcodeScanner';
 import BookList from '../../Components/BookShelf/BookShelf';
@@ -41,18 +41,20 @@ export const SearchScreen = () => {
                 <Spinner size="giant" />
             </Layout>
         ) : (
-            renderBookList
+            <Layout style={{ minHeight: 100, flex: 1, height: '100%' }}>{renderBookList}</Layout>
         );
     }, [bookSearchLoading, renderBookList, styles.spinnerWrapper]);
 
     return (
-        <>
-            <Layout style={styles.tab}>
-                <Text category="h1" style={{ marginBottom: 32 }}>
-                    Bücher suchen
-                </Text>
-                {pageContent}
-            </Layout>
+        <Layout style={{ flex: 1 }}>
+            <ScrollView>
+                <Layout style={styles.tab}>
+                    <Text category="h1" style={styles.headline}>
+                        Mein Buchladen
+                    </Text>
+                    {pageContent}
+                </Layout>
+            </ScrollView>
             <KeyboardAvoidingComponents>
                 <Layout style={styles.inputWrapper}>
                     <Input
@@ -77,33 +79,46 @@ export const SearchScreen = () => {
                     {renderBarcodeScanner}
                 </Layout>
             </KeyboardAvoidingComponents>
-        </>
+        </Layout>
     );
 };
 
 const themedStyles = StyleSheet.create({
+    outerLayout: {
+        backgroundColor: 'color-primary-500',
+    },
     tab: {
-        paddingHorizontal: 16,
+        paddingHorizontal: 32,
         paddingBottom: 0,
         paddingTop: 24,
         flex: 1,
         backgroundColor: 'color-primary-500',
+        height: 400,
+    },
+    headline: {
+        fontSize: 50,
+        marginBottom: 32,
     },
     spinnerWrapper: {
         width: '100%',
+        flex: 1,
+        minHeight: 200,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 64,
     },
     inputWrapper: {
-        paddingHorizontal: 16,
+        paddingHorizontal: 32,
         paddingVertical: 12,
         borderTopColor: 'color-primary-400',
         borderTopWidth: 2,
         display: 'flex',
         flexDirection: 'row',
         gap: 8,
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
     },
     input: {
         flex: 1,
@@ -111,7 +126,7 @@ const themedStyles = StyleSheet.create({
         borderWidth: 2,
     },
     button: {
-        paddingHorizontal: 2,
+        paddingHorizontal: 4,
         paddingVertical: 9,
         zIndex: 100000,
         backgroundColor: 'color-basic-100',
