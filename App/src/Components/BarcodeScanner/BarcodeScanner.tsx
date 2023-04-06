@@ -65,14 +65,14 @@ const BarcodeScanner = ({ setCode }: { setCode: Function }) => {
                 visible={openModal}
                 onBackdropPress={() => setOpenModal(false)}
                 backdropStyle={styles.modalBackdrop}>
-                <Card>
+                <Layout style={styles.card}>
                     <Layout>
                         <BarCodeScanner
                             onBarCodeScanned={handleBarCodeScanned}
                             style={styles.barcodeCamera}
                         />
                     </Layout>
-                </Card>
+                </Layout>
             </Modal>
         </>
     );
@@ -80,7 +80,15 @@ const BarcodeScanner = ({ setCode }: { setCode: Function }) => {
 
 const themedStyles = StyleSheet.create({
     modalBackdrop: {
-        backgroundColor: 'rgba(0,0,0,0.25)',
+        backgroundColor: 'rgba(0,0,0,0.35)',
+    },
+    card: {
+        borderRadius: 5,
+        overflow: 'hidden',
+        shadowRadius: 10,
+        shadowOpacity: 0.5,
+        padding: 8,
+        backgroundColor: 'color-basic-100',
     },
     barcodeCamera: {
         height: 200,

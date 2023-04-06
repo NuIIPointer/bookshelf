@@ -132,7 +132,7 @@ const themedStyles = StyleSheet.create({
         borderRadius: 5,
     },
     modalBackdrop: {
-        backgroundColor: 'rgba(0,0,0,0.25)',
+        backgroundColor: 'rgba(0,0,0,0.35)',
     },
     pagesModalHeadline: {
         marginBottom: 4,
