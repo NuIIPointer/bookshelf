@@ -32,7 +32,7 @@ export const ReadingListScreen = () => {
 
     return (
         <Layout style={styles.tab}>
-            <Text category="h1">ReadingList</Text>
+            <Text category="h1">Meine Bücherregal</Text>
             <BookList books={sortedBooks} />
         </Layout>
     );

@@ -8,19 +8,19 @@ import {
     Button,
     Icon,
 } from '@ui-kitten/components';
+import Lottie from 'lottie-react-native';
 import React, { useState, useMemo, useContext, useCallback, useEffect } from 'react';
 import { FlatList, StyleSheet } from 'react-native';
 
 import BookListItem from './BookShelfItem';
 import { StoredBook, BookSearchResult, GoogleBookContext } from '../../Context/GoogleBooks.Context';
+import lottieReading from '../../assets/lotties/107918-reading-writing-studying-knowledge-books.json';
 
 const BookList = ({ books }: { books: ArrayLike<StoredBook & BookSearchResult> }) => {
     const styles = useStyleSheet(themedStyles);
     const [openModalBookId, setOpenModalBookId] = useState<string | null>(null);
     const { storedBooks, addPagesReadToBook } = useContext(GoogleBookContext);
     const book: StoredBook | null = openModalBookId ? storedBooks[openModalBookId] : null;
-
-    console.log('rerender list');
 
     const pagesRead = useMemo(() => {
         const keys = Object.keys(book?.customData?.pagesRead || {});
@@ -91,6 +91,10 @@ const BookList = ({ books }: { books: ArrayLike<StoredBook & BookSearchResult> }
     }, []);
 
     const renderList = useMemo(() => {
+        if (books.length === 0) {
+            return <Lottie source={lottieReading} autoPlay loop />;
+        }
+
         return (
             <FlatList
                 data={books}

@@ -1,9 +1,12 @@
 import { Text, Layout, Card } from '@ui-kitten/components';
 import * as dateDFns from 'date-fns';
+import { LinearGradient } from 'expo-linear-gradient';
 import React, { useContext, useMemo } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { LineChart, Grid } from 'react-native-svg-charts';
 
+import ColoredIconPill from '../../Components/ColoredIconPill/ColoredIconPill';
+import DashboardCard from '../../Components/DashboardCard/DashboardCard';
 import { GoogleBookContext } from '../../Context/GoogleBooks.Context';
 import intArraySum from '../../Helper/intArraySum';
 
@@ -18,7 +21,7 @@ export const HomeScreen = () => {
                     .sort()
                     .map((key) => pagesRead[key]);
 
-                return pagesReadValues[pagesReadValues.length - 1];
+                return pagesReadValues[pagesReadValues.length - 1] || 0;
             }),
         [storedBooks]
     );
@@ -39,7 +42,7 @@ export const HomeScreen = () => {
 
                 const mostRecentKey = filteredKeys[filteredKeys.length - 1];
 
-                return pagesRead[mostRecentKey];
+                return pagesRead[mostRecentKey] || 0;
             }),
         [storedBooks]
     );
@@ -60,7 +63,7 @@ export const HomeScreen = () => {
 
                 const mostRecentKey = filteredKeys[filteredKeys.length - 1];
 
-                return pagesRead[mostRecentKey];
+                return pagesRead[mostRecentKey] || 0;
             }),
         [storedBooks]
     );
@@ -88,22 +91,34 @@ export const HomeScreen = () => {
         <>
             <Layout style={styles.tab}>
                 <Text category="h1" style={{ marginBottom: 16 }}>
-                    Deine Statistik
+                    Meine Statistik
                 </Text>
                 <ScrollView>
                     <Layout style={styles.cardWrapper}>
-                        <Card style={styles.card}>
-                            <Text style={styles.cardText}>Seiten gelesen, gesammt!</Text>
-                            <Text category="h1">{pagesReadTotal}</Text>
-                        </Card>
-                        <Card style={styles.card}>
-                            <Text style={styles.cardText}>Seiten gelesen, dieses Jahr!</Text>
-                            <Text category="h1">{pagesReadYear}</Text>
-                        </Card>
-                        <Card style={styles.card}>
-                            <Text style={styles.cardText}>Seiten gelesen, diesen Monat!</Text>
-                            <Text category="h1">{pagesReadMonth}</Text>
-                        </Card>
+                        <Layout style={styles.card}>
+                            <DashboardCard
+                                description="Seiten gelesen, gesammt!"
+                                boldText={pagesReadTotal}
+                                colorStart="#134E5E"
+                                colorEnd="#71B280"
+                            />
+                        </Layout>
+                        <Layout style={styles.card}>
+                            <DashboardCard
+                                description="Seiten gelesen, dieses Jahr!"
+                                boldText={pagesReadYear}
+                                colorStart="#134E5E"
+                                colorEnd="#71B280"
+                            />
+                        </Layout>
+                        <Layout style={styles.card}>
+                            <DashboardCard
+                                description="Seiten gelesen, diesen Monat!"
+                                boldText={pagesReadMonth}
+                                colorStart="#134E5E"
+                                colorEnd="#71B280"
+                            />
+                        </Layout>
                         <Layout style={{ width: '100%' }}>
                             <LineChart
                                 style={{ height: 200 }}
@@ -127,20 +142,14 @@ const styles = StyleSheet.create({
         paddingBottom: 0,
         flex: 1,
     },
+    card: {
+        flexBasis: '34%',
+        flexGrow: 1,
+    },
     cardWrapper: {
         display: 'flex',
         flexDirection: 'row',
         flexWrap: 'wrap',
         gap: 16,
-    },
-    card: {
-        flexGrow: 1,
-        flexBasis: '40%',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-    },
-    cardText: {
-        marginBottom: 4,
     },
 });

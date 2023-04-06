@@ -16,6 +16,12 @@ const config: ExpoConfig = {
             projectId: '0f41a5ef-9961-4a02-aa55-5d0ef7105e7b',
         },
     },
+    android: {
+        package: 'com.nuiipointer.BookShelf',
+    },
+    ios: {
+        bundleIdentifier: 'com.nuiipointer.BookShelf',
+    },
 };
 
 export default config;

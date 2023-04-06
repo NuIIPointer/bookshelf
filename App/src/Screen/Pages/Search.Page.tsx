@@ -13,11 +13,6 @@ export const SearchScreen = () => {
     const [inputValue, setInputValue] = useState(bookSearchQuery);
     const theme = useTheme();
     const iconColor = theme['text-alternate-color'];
-
-    useEffect(() => {
-        console.log('change bookSearchResults');
-    }, [bookSearchResults]);
-
     const onPress = useCallback(() => {
         setBookSearchQuery(inputValue);
     }, [setBookSearchQuery, inputValue]);
@@ -43,7 +38,7 @@ export const SearchScreen = () => {
     return (
         <>
             <Layout style={styles.tab}>
-                <Text category="h1">Buch-Liste</Text>
+                <Text category="h1">Bücher suchen</Text>
                 {pageContent}
             </Layout>
             <KeyboardAvoidingComponents>

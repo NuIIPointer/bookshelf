@@ -57,7 +57,7 @@ const BarcodeScanner = ({ setCode }: { setCode: Function }) => {
                     <Layout>
                         <BarCodeScanner
                             onBarCodeScanned={handleBarCodeScanned}
-                            style={{ height: 200, width: 200 }}
+                            style={styles.barcodeCamera}
                         />
                     </Layout>
                 </Card>
@@ -69,6 +69,10 @@ const BarcodeScanner = ({ setCode }: { setCode: Function }) => {
 const styles = StyleSheet.create({
     modalBackdrop: {
         backgroundColor: 'rgba(0,0,0,0.25)',
+    },
+    barcodeCamera: {
+        height: 200,
+        width: 300,
     },
 });
 
