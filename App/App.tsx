@@ -7,19 +7,24 @@ import React from 'react';
 import AppContextProvider from './src/Context/App.Context';
 import GoogleBooksContextProvider from './src/Context/GoogleBooks.Context';
 import Pager from './src/Screen/Pager';
+import TopNavigation from './src/Screen/TopNavigation';
+import { customThemeDark } from './src/assets/styles/customThemeDark';
 
-export default () => (
-    <>
-        <IconRegistry icons={EvaIconsPack} />
-        <ApplicationProvider {...eva} theme={eva.light}>
-            <NavigationContainer>
-                <AppContextProvider>
-                    <GoogleBooksContextProvider>
-                        <Pager />
-                        {/* <BottomTabBar /> */}
-                    </GoogleBooksContextProvider>
-                </AppContextProvider>
-            </NavigationContainer>
-        </ApplicationProvider>
-    </>
-);
+export default () => {
+    return (
+        <>
+            <IconRegistry icons={EvaIconsPack} />
+            <ApplicationProvider {...eva} theme={customThemeDark}>
+                <NavigationContainer>
+                    <AppContextProvider>
+                        <GoogleBooksContextProvider>
+                            <TopNavigation />
+                            <Pager />
+                            {/* <BottomTabBar /> */}
+                        </GoogleBooksContextProvider>
+                    </AppContextProvider>
+                </NavigationContainer>
+            </ApplicationProvider>
+        </>
+    );
+};

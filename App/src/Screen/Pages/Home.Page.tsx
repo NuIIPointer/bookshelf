@@ -1,17 +1,16 @@
-import { Text, Layout, Card } from '@ui-kitten/components';
+import { Text, Layout, useStyleSheet } from '@ui-kitten/components';
 import * as dateDFns from 'date-fns';
-import { LinearGradient } from 'expo-linear-gradient';
 import React, { useContext, useMemo } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { LineChart, Grid } from 'react-native-svg-charts';
 
-import ColoredIconPill from '../../Components/ColoredIconPill/ColoredIconPill';
 import DashboardCard from '../../Components/DashboardCard/DashboardCard';
 import { GoogleBookContext } from '../../Context/GoogleBooks.Context';
 import intArraySum from '../../Helper/intArraySum';
 
 export const HomeScreen = () => {
     const { storedBooks } = useContext(GoogleBookContext);
+    const styles = useStyleSheet(themedStyles);
 
     const pagesReadTotalList = useMemo(
         () =>
@@ -90,35 +89,30 @@ export const HomeScreen = () => {
     return (
         <>
             <Layout style={styles.tab}>
-                <Text category="h1" style={{ marginBottom: 16 }}>
+                <Text category="h1" style={{ marginBottom: 32 }}>
                     Meine Statistik
                 </Text>
-                <ScrollView>
+                <ScrollView style={styles.scrollView}>
                     <Layout style={styles.cardWrapper}>
                         <Layout style={styles.card}>
                             <DashboardCard
                                 description="Seiten gelesen, gesammt!"
                                 boldText={pagesReadTotal}
-                                colorStart="#134E5E"
-                                colorEnd="#71B280"
                             />
                         </Layout>
                         <Layout style={styles.card}>
                             <DashboardCard
                                 description="Seiten gelesen, dieses Jahr!"
                                 boldText={pagesReadYear}
-                                colorStart="#134E5E"
-                                colorEnd="#71B280"
                             />
                         </Layout>
                         <Layout style={styles.card}>
                             <DashboardCard
                                 description="Seiten gelesen, diesen Monat!"
                                 boldText={pagesReadMonth}
-                                colorStart="#134E5E"
-                                colorEnd="#71B280"
                             />
                         </Layout>
+                        <Layout style={styles.card} />
                         <Layout style={{ width: '100%' }}>
                             <LineChart
                                 style={{ height: 200 }}
@@ -135,12 +129,17 @@ export const HomeScreen = () => {
     );
 };
 
-const styles = StyleSheet.create({
+const themedStyles = StyleSheet.create({
+    scrollView: {
+        padding: 16,
+        margin: -16,
+    },
     tab: {
-        paddingHorizontal: 16,
+        paddingHorizontal: 32,
         paddingTop: 24,
         paddingBottom: 0,
         flex: 1,
+        backgroundColor: 'color-primary-500',
     },
     card: {
         flexBasis: '34%',
@@ -150,6 +149,7 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 16,
+        gap: 32,
+        backgroundColor: 'color-primary-500',
     },
 });

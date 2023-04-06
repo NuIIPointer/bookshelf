@@ -1,6 +1,5 @@
-import axios from 'axios';
 import { differenceInDays } from 'date-fns';
-import React, { createContext, useState, useEffect, useCallback, useRef } from 'react';
+import React, { createContext, useState, useEffect, useCallback } from 'react';
 
 import { retrieveData, storeData } from './AsyncStorage';
 import objDeepMerge from '../Helper/objDeepMerge';

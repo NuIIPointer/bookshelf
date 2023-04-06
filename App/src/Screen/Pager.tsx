@@ -13,6 +13,7 @@ const Pager = () => {
         <Navigator
             screenOptions={() => ({
                 freezeOnBlur: true,
+                headerShown: false,
             })}
             tabBar={(props) => <BottomTabBar {...props} />}>
             <Screen name="Home" component={HomeScreen} />

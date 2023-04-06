@@ -1,15 +1,13 @@
-import { Card, Layout, Text } from '@ui-kitten/components';
+import { Card, Layout, Text, useStyleSheet, useTheme } from '@ui-kitten/components';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet } from 'react-native';
-
-import ColoredIconPill from '../ColoredIconPill/ColoredIconPill';
 
 const DashboardCard = ({
     description = 'foo',
     boldText,
-    colorStart = 'lightblue',
-    colorEnd = 'blue',
-    textColor = 'white',
+    colorStart = 'color-basic-100',
+    colorEnd = 'color-secondary-200',
+    textColor = 'color-primary-600',
 }: {
     description: string;
     boldText: string | number;
@@ -17,30 +15,63 @@ const DashboardCard = ({
     colorEnd?: string;
     textColor?: string;
 }) => {
+    const theme = useTheme();
+    // const styles = useStyleSheet(themedStyles);
+    const colorStartMap = theme[colorStart] || colorStart;
+    const colorEndMap = theme[colorEnd] || colorEnd;
+    const textColorMap = theme[textColor] || textColor;
+    const largeTextCharCount = boldText.toString().length;
+    const fontSizeMap = [80, 75, 60, 40];
+    const fontSize = fontSizeMap[largeTextCharCount - 1];
+
     return (
-        <Card style={styles.card}>
-            <LinearGradient
-                colors={[colorStart, colorEnd]}
-                style={styles.linearGradient}
-                start={[0.0, 0.0]}
-                end={[1.0, 1.0]}
-            />
-            {description ? (
-                <Text style={{ ...styles.cardText, color: textColor }}>{description}</Text>
-            ) : null}
-            <Layout style={styles.cardTextWrap}>
-                <Text category="h1" style={{ color: textColor }}>
-                    {boldText}
-                </Text>
+        <Layout style={styles.cardOuter}>
+            <Layout style={styles.cardInner}>
+                <LinearGradient
+                    colors={[colorStartMap, colorEndMap]}
+                    style={styles.linearGradient}
+                    start={[0.0, 0.0]}
+                    end={[1.0, 1.0]}
+                />
+                {description ? (
+                    <Text style={{ ...styles.cardText, color: textColorMap }}>{description}</Text>
+                ) : null}
+                <Layout style={styles.cardTextWrap}>
+                    <Text
+                        category="h1"
+                        style={{
+                            ...styles.largeText,
+                            color: textColorMap,
+                            fontSize,
+                        }}>
+                        {boldText}
+                    </Text>
+                </Layout>
             </Layout>
-        </Card>
+        </Layout>
     );
 };
 
 const styles = StyleSheet.create({
-    card: {
+    cardOuter: {
         borderRadius: 16,
-        borderWidth: 0,
+        backgroundColor: 'transparent',
+        shadowOpacity: 0.3,
+        shadowRadius: 10,
+        shadowOffset: {
+            height: 0,
+            width: 0,
+        },
+    },
+    largeText: {
+        // fontSize: 60,
+    },
+    cardInner: {
+        borderRadius: 16,
+        overflow: 'hidden',
+        backgroundColor: 'transparent',
+        padding: 16,
+        aspectRatio: 1,
     },
     linearGradient: {
         position: 'absolute',
@@ -58,7 +89,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
     },
     cardText: {
-        marginBottom: 4,
         backgroundColor: 'transparent',
         zIndex: 1,
     },

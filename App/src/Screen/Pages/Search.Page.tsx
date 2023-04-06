@@ -1,4 +1,13 @@
-import { Text, Layout, Input, Button, Icon, useTheme, Spinner } from '@ui-kitten/components';
+import {
+    Text,
+    Layout,
+    Input,
+    Button,
+    Icon,
+    useTheme,
+    Spinner,
+    useStyleSheet,
+} from '@ui-kitten/components';
 import React, { useCallback, useContext, useState, useEffect, useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 
@@ -12,7 +21,8 @@ export const SearchScreen = () => {
         useContext(GoogleBookContext);
     const [inputValue, setInputValue] = useState(bookSearchQuery);
     const theme = useTheme();
-    const iconColor = theme['text-alternate-color'];
+    const styles = useStyleSheet(themedStyles);
+    const iconColor = theme['color-primary-500'];
     const onPress = useCallback(() => {
         setBookSearchQuery(inputValue);
     }, [setBookSearchQuery, inputValue]);
@@ -33,12 +43,14 @@ export const SearchScreen = () => {
         ) : (
             renderBookList
         );
-    }, [bookSearchLoading, renderBookList]);
+    }, [bookSearchLoading, renderBookList, styles.spinnerWrapper]);
 
     return (
         <>
             <Layout style={styles.tab}>
-                <Text category="h1">Bücher suchen</Text>
+                <Text category="h1" style={{ marginBottom: 32 }}>
+                    Bücher suchen
+                </Text>
                 {pageContent}
             </Layout>
             <KeyboardAvoidingComponents>
@@ -69,12 +81,13 @@ export const SearchScreen = () => {
     );
 };
 
-const styles = StyleSheet.create({
+const themedStyles = StyleSheet.create({
     tab: {
         paddingHorizontal: 16,
         paddingBottom: 0,
         paddingTop: 24,
         flex: 1,
+        backgroundColor: 'color-primary-500',
     },
     spinnerWrapper: {
         width: '100%',
@@ -86,19 +99,22 @@ const styles = StyleSheet.create({
     inputWrapper: {
         paddingHorizontal: 16,
         paddingVertical: 12,
-        borderTopColor: '#eee',
-        borderTopWidth: 1,
+        borderTopColor: 'color-primary-400',
+        borderTopWidth: 2,
         display: 'flex',
         flexDirection: 'row',
         gap: 8,
     },
     input: {
         flex: 1,
+        borderColor: 'color-basic-100',
+        borderWidth: 2,
     },
     button: {
         paddingHorizontal: 2,
         paddingVertical: 9,
         zIndex: 100000,
+        backgroundColor: 'color-basic-100',
     },
     icon: {
         height: 12,

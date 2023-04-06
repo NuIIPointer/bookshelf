@@ -1,19 +1,28 @@
-import { Layout, useTheme, Text, Icon, Modal, Card, Button } from '@ui-kitten/components';
+import {
+    Layout,
+    useTheme,
+    Text,
+    Icon,
+    Modal,
+    Card,
+    Button,
+    useStyleSheet,
+} from '@ui-kitten/components';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import React, { useState, useEffect, useCallback } from 'react';
 import { Keyboard, Platform, StyleSheet } from 'react-native';
 
 const BarcodeScanner = ({ setCode }: { setCode: Function }) => {
-    const theme = useTheme();
-
     const [hasPermission, setHasPermission] = useState<boolean | null>(null);
     const [openModal, setOpenModal] = useState(false);
+    const styles = useStyleSheet(themedStyles);
+    const theme = useTheme();
 
     useEffect(() => {
         if (openModal) {
             Keyboard.dismiss();
         }
-    }, []);
+    }, [openModal]);
 
     useEffect(() => {
         const getBarCodeScannerPermissions = async () => {
@@ -45,9 +54,12 @@ const BarcodeScanner = ({ setCode }: { setCode: Function }) => {
     return (
         <>
             <Button
+                style={styles.button}
                 disabled={Platform.OS === 'web'}
                 onPress={onPress}
-                accessoryLeft={<Icon name={openModal ? 'close' : 'camera'} fill="#fff" />}
+                accessoryLeft={
+                    <Icon name={openModal ? 'close' : 'camera'} fill={theme['color-primary-500']} />
+                }
             />
             <Modal
                 visible={openModal}
@@ -66,13 +78,16 @@ const BarcodeScanner = ({ setCode }: { setCode: Function }) => {
     );
 };
 
-const styles = StyleSheet.create({
+const themedStyles = StyleSheet.create({
     modalBackdrop: {
         backgroundColor: 'rgba(0,0,0,0.25)',
     },
     barcodeCamera: {
         height: 200,
         width: 300,
+    },
+    button: {
+        backgroundColor: 'color-basic-100',
     },
 });
 

@@ -1,4 +1,4 @@
-import { Layout, Text } from '@ui-kitten/components';
+import { Layout, Text, useStyleSheet } from '@ui-kitten/components';
 import React, { useContext, useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 
@@ -7,6 +7,7 @@ import { GoogleBookContext } from '../../Context/GoogleBooks.Context';
 
 export const ReadingListScreen = () => {
     const { storedBooks, bookmarkList } = useContext(GoogleBookContext);
+    const styles = useStyleSheet(themedStyles);
     const sortedKeys = useMemo(
         () =>
             Object.keys(storedBooks).sort((a, b) => {
@@ -32,17 +33,18 @@ export const ReadingListScreen = () => {
 
     return (
         <Layout style={styles.tab}>
-            <Text category="h1">Meine Bücherregal</Text>
+            <Text category="h1" style={{ marginBottom: 32 }}>Meine Bücherregal</Text>
             <BookList books={sortedBooks} />
         </Layout>
     );
 };
 
-const styles = StyleSheet.create({
+const themedStyles = StyleSheet.create({
     tab: {
         paddingHorizontal: 16,
         paddingBottom: 0,
         paddingTop: 24,
         flex: 1,
+        backgroundColor: 'color-primary-500',
     },
 });
