@@ -6,24 +6,20 @@ import React from 'react';
 
 import AppContextProvider from './src/Context/App.Context';
 import GoogleBooksContextProvider from './src/Context/GoogleBooks.Context';
-import OpenAiContextProvider from './src/Context/OpenAi.Context';
-// import BottomTabBar from './src/Screen/BottomTabBar';
 import Pager from './src/Screen/Pager';
 
 export default () => (
     <>
         <IconRegistry icons={EvaIconsPack} />
         <ApplicationProvider {...eva} theme={eva.light}>
-            <OpenAiContextProvider>
-                <NavigationContainer>
-                    <AppContextProvider>
-                        <GoogleBooksContextProvider>
-                            <Pager />
-                            {/* <BottomTabBar /> */}
-                        </GoogleBooksContextProvider>
-                    </AppContextProvider>
-                </NavigationContainer>
-            </OpenAiContextProvider>
+            <NavigationContainer>
+                <AppContextProvider>
+                    <GoogleBooksContextProvider>
+                        <Pager />
+                        {/* <BottomTabBar /> */}
+                    </GoogleBooksContextProvider>
+                </AppContextProvider>
+            </NavigationContainer>
         </ApplicationProvider>
     </>
 );
