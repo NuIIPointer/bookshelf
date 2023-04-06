@@ -16,8 +16,8 @@ const BookListItem = ({
     const { readingList, toggleReadingList, bookmarkList, toggleBookmarkList } =
         useContext(GoogleBookContext);
     const theme = useTheme();
-    const activeFillColor = theme['color-primary-500'];
-    const inactiveFillColor = theme['color-basic-800'];
+    const activeFillColor = theme['color-basic-100'];
+    const inactiveFillColor = theme['color-basic-100'];
     const styles = useStyleSheet(themedStyles);
 
     const insideReadingList = !!readingList[item.id];
@@ -44,6 +44,22 @@ const BookListItem = ({
                     {titleShortened !== title ? '...' : ''}
                 </Text>
                 {authors ? <Text style={styles.authors}>{authors.join(', ')}</Text> : null}
+                <Layout style={styles.progressContainer}>
+                    {pages ? (
+                        <ProgressBar
+                            current={(pagesRead / pages) * 100}
+                            outerStyle={{
+                                borderWidth: 1,
+                                borderRadius: 4,
+                                borderColor: theme['color-primary-400'],
+                            }}
+                            innerStyle={{
+                                height: 4,
+                                backgroundColor: theme['color-basic-100'],
+                            }}
+                        />
+                    ) : null}
+                </Layout>
                 {pages ? (
                     <>
                         <Layout style={styles.pagesWrapper}>
@@ -88,19 +104,6 @@ const BookListItem = ({
                         )}
                     />
                 </Layout>
-                <Layout style={styles.progressContainer}>
-                    {pages ? (
-                        <ProgressBar
-                            current={(pagesRead / pages) * 100}
-                            outerStyle={{
-                                borderWidth: 0,
-                                borderRadius: 2,
-                                backgroundColor: '#ddd',
-                            }}
-                            innerStyle={{ height: 4 }}
-                        />
-                    ) : null}
-                </Layout>
             </Layout>
         </Layout>
     );
@@ -113,9 +116,9 @@ const themedStyles = StyleSheet.create({
         alignItems: 'flex-start',
         marginBottom: 32,
     },
-    // progressContainer: {
-    //     width: '100%',
-    // },
+    progressContainer: {
+        width: '100%',
+    },
     thumbnailWrapper: {
         borderWidth: 4,
         borderColor: 'color-basic-100',
@@ -148,9 +151,7 @@ const themedStyles = StyleSheet.create({
         display: 'flex',
         alignItems: 'flex-start',
         flexDirection: 'row',
-        borderTopWidth: 1,
-        borderTopColor: 'color-primary-400',
-        paddingTop: 16,
+        marginTop: 16,
         marginRight: 8,
         backgroundColor: 'transparent',
     },

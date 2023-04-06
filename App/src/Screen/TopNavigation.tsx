@@ -34,7 +34,7 @@ const TopNavigationCustom = () => {
 
     const renderRightActions = () => (
         <>
-            <TopNavigationAction icon={EditIcon} />
+            {/* <TopNavigationAction icon={EditIcon} /> */}
             <OverflowMenu
                 anchor={renderMenuAction}
                 visible={menuVisible}
@@ -57,9 +57,9 @@ const TopNavigationCustom = () => {
         <Layout style={styles.container} level="1" onLayout={onLayoutResize}>
             <TopNavigation
                 alignment="center"
-                title="Eva Application"
-                subtitle="Subtitle"
-                accessoryLeft={renderBackAction}
+                title="Bookshelf"
+                subtitle="Eine App von Lucas"
+                // accessoryLeft={renderBackAction}
                 accessoryRight={renderRightActions}
             />
         </Layout>
@@ -70,8 +70,11 @@ export default TopNavigationCustom;
 
 const themedStyles = StyleSheet.create({
     container: {
-        paddingTop: 48,
+        paddingTop: 40,
+        paddingBottom: 4,
         paddingHorizontal: 12,
         backgroundColor: 'color-primary-500',
+        borderBottomColor: 'color-primary-400',
+        borderBottomWidth: 1,
     },
 });

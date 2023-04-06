@@ -55,12 +55,12 @@ const BookList = ({ books }: { books: ArrayLike<StoredBook & BookSearchResult> }
                 visible={!!openModalBookId}
                 onBackdropPress={closeModal}
                 backdropStyle={styles.modalBackdrop}>
-                <Card>
+                <Layout style={styles.modalCard}>
                     <Text category="h5" style={styles.pagesModalHeadline}>
                         Neue Seitenzahl
                     </Text>
                     <Text style={styles.pagesModalText}>{bookTitle}</Text>
-                    <Layout style={styles.pagesModalInput}>
+                    <Layout style={styles.pagesModalInputWrapper}>
                         <Input
                             size="large"
                             value={pagesInputValue}
@@ -70,6 +70,7 @@ const BookList = ({ books }: { books: ArrayLike<StoredBook & BookSearchResult> }
                             }}
                         />
                         <Button
+                            style={styles.modalButton}
                             size="large"
                             accessoryLeft={() => (
                                 <Icon
@@ -81,7 +82,7 @@ const BookList = ({ books }: { books: ArrayLike<StoredBook & BookSearchResult> }
                             onPress={closeModal}
                         />
                     </Layout>
-                </Card>
+                </Layout>
             </Modal>
         );
     }, [book?.volumeInfo?.title, openModalBookId, closeModal, styles, pagesInputValue]);
@@ -92,13 +93,13 @@ const BookList = ({ books }: { books: ArrayLike<StoredBook & BookSearchResult> }
 
     const renderList = useMemo(() => {
         if (books.length === 0) {
-            return <Lottie source={lottieReading} autoPlay loop />;
+            return <Lottie style={styles.lottieContainer} source={lottieReading} autoPlay loop />;
         }
 
         return books.map((singleBook: StoredBook & BookSearchResult) => (
             <BookListItem item={singleBook} key={singleBook.id} onModalClick={onModalClick} />
         ));
-    }, [books, onModalClick]);
+    }, [books, onModalClick, styles]);
 
     return (
         <Layout style={styles.container}>
@@ -117,28 +118,52 @@ const themedStyles = StyleSheet.create({
     listContainer: {
         // marginTop: 16,
     },
+    lottieContainer: {
+        width: '100%',
+    },
+    modalCard: {
+        backgroundColor: 'color-basic-100',
+        borderColor: 'color-basic-100',
+        maxWidth: 300,
+        minWidth: 250,
+        shadowOpacity: 0.25,
+        shadowRadius: 10,
+        padding: 16,
+        borderRadius: 5,
+    },
     modalBackdrop: {
         backgroundColor: 'rgba(0,0,0,0.25)',
     },
     pagesModalHeadline: {
         marginBottom: 4,
+        color: 'color-primary-500',
     },
     pagesModalText: {
         marginBottom: 16,
+        color: 'color-shade-800',
     },
-    pagesModalInput: {
+    pagesModalInputWrapper: {
         display: 'flex',
         alignItems: 'center',
         flexDirection: 'row',
         gap: 8,
+        backgroundColor: 'color-basic-100',
     },
     pagesModalButtonIcon: {
         height: 16,
         width: 16,
         margin: -2,
     },
+    modalButton: {
+        backgroundColor: 'color-shade-800',
+        borderColor: 'color-shade-800',
+    },
     pagesInput: {
         flex: 1,
+        borderColor: 'color-shade-800',
+        borderRadius: 4,
+        borderWidth: 2,
+        backgroundColor: 'color-shade-800',
     },
 });
 

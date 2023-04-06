@@ -5,8 +5,8 @@ const KeyboardAvoidingComponents = ({ children }: { children: any }) => {
     const height = useHeaderHeight();
     return (
         <KeyboardAvoidingView
-            keyboardVerticalOffset={height}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+            keyboardVerticalOffset={height + 100}
+            behavior={Platform.OS === 'ios' ? 'position' : 'height'}>
             {children}
         </KeyboardAvoidingView>
     );

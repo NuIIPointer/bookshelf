@@ -7,7 +7,7 @@ const DashboardCard = ({
     boldText,
     colorStart = 'color-basic-100',
     colorEnd = 'color-basic-100',
-    textColor = 'color-secondary-500',
+    textColor = 'color-shade-800',
     borderColor = 'color-secondary-500',
     borderWidth = 0,
 }: {

@@ -11,7 +11,7 @@ import { StyleSheet } from 'react-native';
 const RenderIcon = ({ icon, ...otherProps }: { icon: string }) => {
     const theme = useTheme();
 
-    return <Icon fill={theme['color-primary-500']} name={icon} {...otherProps} />;
+    return <Icon fill={theme['color-shade-800']} name={icon} {...otherProps} />;
 };
 
 const BottomTabBar = ({ navigation, state }: { navigation: any; state: any }) => {
@@ -33,7 +33,7 @@ const BottomTabBar = ({ navigation, state }: { navigation: any; state: any }) =>
 const themedStyles = StyleSheet.create({
     bottomNavigation: {
         paddingBottom: 32,
-        paddingTop: 16,
+        paddingTop: 24,
         backgroundColor: 'color-basic-100',
     },
     indicator: {

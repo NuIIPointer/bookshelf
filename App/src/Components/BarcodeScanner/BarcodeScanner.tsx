@@ -58,7 +58,7 @@ const BarcodeScanner = ({ setCode }: { setCode: Function }) => {
                 disabled={Platform.OS === 'web'}
                 onPress={onPress}
                 accessoryLeft={
-                    <Icon name={openModal ? 'close' : 'camera'} fill={theme['color-primary-500']} />
+                    <Icon name={openModal ? 'close' : 'camera'} fill={theme['color-shade-800']} />
                 }
             />
             <Modal

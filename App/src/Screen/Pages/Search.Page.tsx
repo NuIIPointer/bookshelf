@@ -22,7 +22,7 @@ export const SearchScreen = () => {
     const [inputValue, setInputValue] = useState(bookSearchQuery);
     const theme = useTheme();
     const styles = useStyleSheet(themedStyles);
-    const iconColor = theme['color-primary-500'];
+    const iconColor = theme['color-shade-800'];
     const onPress = useCallback(() => {
         setBookSearchQuery(inputValue);
     }, [setBookSearchQuery, inputValue]);
@@ -38,10 +38,10 @@ export const SearchScreen = () => {
     const pageContent = useMemo(() => {
         return bookSearchLoading ? (
             <Layout style={styles.spinnerWrapper}>
-                <Spinner size="giant" />
+                <Spinner size="giant" status="control" />
             </Layout>
         ) : (
-            <Layout style={{ minHeight: 100, flex: 1, height: '100%' }}>{renderBookList}</Layout>
+            renderBookList
         );
     }, [bookSearchLoading, renderBookList, styles.spinnerWrapper]);
 
@@ -93,7 +93,7 @@ const themedStyles = StyleSheet.create({
         paddingTop: 24,
         flex: 1,
         backgroundColor: 'color-primary-500',
-        height: 400,
+        marginBottom: 112,
     },
     headline: {
         fontSize: 50,
@@ -104,7 +104,7 @@ const themedStyles = StyleSheet.create({
         flex: 1,
         minHeight: 200,
         display: 'flex',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         alignItems: 'center',
         marginTop: 64,
     },
@@ -112,7 +112,7 @@ const themedStyles = StyleSheet.create({
         paddingHorizontal: 32,
         paddingVertical: 12,
         borderTopColor: 'color-primary-400',
-        borderTopWidth: 2,
+        borderTopWidth: 1,
         display: 'flex',
         flexDirection: 'row',
         gap: 8,

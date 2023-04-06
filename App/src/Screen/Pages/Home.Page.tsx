@@ -131,6 +131,7 @@ const themedStyles = StyleSheet.create({
         paddingBottom: 0,
         flex: 1,
         backgroundColor: 'color-primary-500',
+        marginBottom: 80,
     },
     headline: {
         fontSize: 50,
