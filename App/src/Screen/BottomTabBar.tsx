@@ -37,7 +37,7 @@ const themedStyles = StyleSheet.create({
         backgroundColor: 'color-basic-100',
     },
     indicator: {
-        backgroundColor: 'color-primary-500',
+        backgroundColor: 'color-secondary-300',
     },
 });
 

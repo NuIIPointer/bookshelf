@@ -1,16 +1,7 @@
-import {
-    Layout,
-    useStyleSheet,
-    Text,
-    Modal,
-    Card,
-    Input,
-    Button,
-    Icon,
-} from '@ui-kitten/components';
+import { Layout, useStyleSheet, Text, Modal, Input, Button, Icon } from '@ui-kitten/components';
 import Lottie from 'lottie-react-native';
 import React, { useState, useMemo, useContext, useCallback, useEffect } from 'react';
-import { FlatList, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import BookListItem from './BookShelfItem';
 import { StoredBook, BookSearchResult, GoogleBookContext } from '../../Context/GoogleBooks.Context';

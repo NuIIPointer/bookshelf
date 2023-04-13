@@ -1,65 +1,43 @@
-import { Card, Layout, Text, useStyleSheet, useTheme } from '@ui-kitten/components';
-import { LinearGradient } from 'expo-linear-gradient';
+import { Layout, Text, useTheme } from '@ui-kitten/components';
+import * as React from 'react';
 import { StyleSheet } from 'react-native';
+
+import CustomCard from '../CustomCard/CustomCard';
 
 const DashboardCard = ({
     description = 'foo',
     boldText,
-    colorStart = 'color-basic-100',
-    colorEnd = 'color-basic-100',
-    textColor = 'color-shade-800',
-    borderColor = 'color-secondary-500',
-    borderWidth = 0,
+    Icon = () => {},
 }: {
     description: string;
     boldText: string | number;
-    colorStart?: string;
-    colorEnd?: string;
-    textColor?: string;
-    borderColor?: string;
-    borderWidth?: number;
+    Icon?: Function;
 }) => {
     const theme = useTheme();
     // const styles = useStyleSheet(themedStyles);
-    const colorStartMap = theme[colorStart] || colorStart;
-    const colorEndMap = theme[colorEnd] || colorEnd;
-    const textColorMap = theme[textColor] || textColor;
+    const textColorMap = theme['color-shade-800'];
     const largeTextCharCount = boldText.toString().length;
     const fontSizeMap = [65, 65, 55, 40];
     const fontSize = fontSizeMap[largeTextCharCount - 1];
-    const borderColorMap = theme[borderColor] || borderColor;
 
     return (
-        <Layout
-            style={{
-                ...styles.cardOuter,
-                borderWidth,
-                borderColor: borderColorMap,
-                backgroundColor: borderColorMap,
-            }}>
-            <Layout style={styles.cardInner}>
-                <LinearGradient
-                    colors={[colorStartMap, colorEndMap]}
-                    style={styles.linearGradient}
-                    start={[0.0, 0.0]}
-                    end={[1.0, 1.0]}
-                />
-                {description ? (
-                    <Text style={{ ...styles.cardText, color: textColorMap }}>{description}</Text>
-                ) : null}
-                <Layout style={styles.cardTextWrap}>
-                    <Text
-                        category="h1"
-                        style={{
-                            ...styles.largeText,
-                            color: textColorMap,
-                            fontSize,
-                        }}>
-                        {boldText}
-                    </Text>
-                </Layout>
+        <CustomCard ratio={1}>
+            <Icon />
+            {description ? (
+                <Text style={{ ...styles.cardText, color: textColorMap }}>{description}</Text>
+            ) : null}
+            <Layout style={styles.cardTextWrap}>
+                <Text
+                    category="h1"
+                    style={{
+                        ...styles.largeText,
+                        color: textColorMap,
+                        fontSize,
+                    }}>
+                    {boldText}
+                </Text>
             </Layout>
-        </Layout>
+        </CustomCard>
     );
 };
 
@@ -103,6 +81,8 @@ const styles = StyleSheet.create({
         zIndex: 1,
         fontSize: 26,
         fontWeight: 300,
+        textShadowRadius: 2,
+        textShadowColor: 'white',
     },
 });
 

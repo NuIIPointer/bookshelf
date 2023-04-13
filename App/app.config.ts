@@ -22,6 +22,12 @@ const config: ExpoConfig = {
     ios: {
         bundleIdentifier: 'com.nuiipointer.BookShelf',
     },
+    updates: {
+        url: 'https://u.expo.dev/0f41a5ef-9961-4a02-aa55-5d0ef7105e7b',
+    },
+    runtimeVersion: {
+        policy: 'sdkVersion',
+    },
 };
 
 export default config;
