@@ -7,7 +7,13 @@ import BookListItem from './BookShelfItem';
 import { StoredBook, BookSearchResult, GoogleBookContext } from '../../Context/GoogleBooks.Context';
 import lottieReading from '../../assets/lotties/107918-reading-writing-studying-knowledge-books.json';
 
-const BookList = ({ books }: { books: ArrayLike<StoredBook & BookSearchResult> }) => {
+const BookList = ({
+    books,
+    variant = 'large',
+}: {
+    books: ArrayLike<StoredBook & BookSearchResult>;
+    variant: 'small' | 'large';
+}) => {
     const styles = useStyleSheet(themedStyles);
     const [openModalBookId, setOpenModalBookId] = useState<string | null>(null);
     const { storedBooks, addPagesReadToBook } = useContext(GoogleBookContext);
@@ -88,9 +94,14 @@ const BookList = ({ books }: { books: ArrayLike<StoredBook & BookSearchResult> }
         }
 
         return books.map((singleBook: StoredBook & BookSearchResult) => (
-            <BookListItem item={singleBook} key={singleBook.id} onModalClick={onModalClick} />
+            <BookListItem
+                item={singleBook}
+                key={singleBook.id}
+                onModalClick={onModalClick}
+                variant={variant}
+            />
         ));
-    }, [books, onModalClick, styles]);
+    }, [books, onModalClick, styles.lottieContainer, variant]);
 
     return (
         <Layout style={styles.container}>

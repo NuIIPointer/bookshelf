@@ -8,7 +8,7 @@ import {
     Spinner,
     useStyleSheet,
 } from '@ui-kitten/components';
-import React, { useCallback, useContext, useState, useEffect, useMemo } from 'react';
+import React, { useCallback, useContext, useState, useMemo } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 
 import BarcodeScanner from '../../Components/BarcodeScanner/BarcodeScanner';
@@ -28,7 +28,7 @@ export const SearchScreen = () => {
     }, [setBookSearchQuery, inputValue]);
 
     const renderBookList = useMemo(() => {
-        return <BookList books={bookSearchResults} />;
+        return <BookList books={bookSearchResults} variant="small" />;
     }, [bookSearchResults]);
 
     const renderBarcodeScanner = useMemo(() => {

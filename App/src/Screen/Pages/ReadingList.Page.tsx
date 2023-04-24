@@ -38,7 +38,7 @@ export const ReadingListScreen = () => {
                     <Text category="h1" style={styles.headline}>
                         Mein Bücherregal
                     </Text>
-                    <BookList books={sortedBooks} />
+                    <BookList books={sortedBooks} variant="large" />
                 </Layout>
             </ScrollView>
         </Layout>

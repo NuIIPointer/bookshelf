@@ -13,7 +13,7 @@ import intArraySum from '../../Helper/intArraySum';
 import BookStack from '../../assets/icons/BookStack';
 import Lamp from '../../assets/icons/Lamp';
 import LeafFilled from '../../assets/icons/LeafFilled';
-import lottieBookReading from '../../assets/lotties/JKDkJgwY8i.json';
+import lottieBookReading from '../../assets/lotties/boyReadingScience.json';
 
 export const HomeScreen = () => {
     const { storedBooks } = useContext(GoogleBookContext);

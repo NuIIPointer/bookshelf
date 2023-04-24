@@ -1,14 +1,22 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import BottomTabBar from './BottomTabBar';
-import { HomeScreen } from './Pages/Home.Page';
-import { ReadingListScreen } from './Pages/ReadingList.Page';
-import { SearchScreen } from './Pages/Search.Page';
+import pagesIndex from './Pages';
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
 const Pager = () => {
+    const pagesNames = useMemo(() => Object.keys(pagesIndex), []);
+
+    const screensMapped = useMemo(() => {
+        return pagesNames.map((pageObj) => {
+            return (
+                <Screen name={pagesIndex[pageObj].name} component={pagesIndex[pageObj].component} />
+            );
+        });
+    }, [pagesNames]);
+
     return (
         <Navigator
             screenOptions={() => ({
@@ -16,9 +24,7 @@ const Pager = () => {
                 headerShown: false,
             })}
             tabBar={(props) => <BottomTabBar {...props} />}>
-            <Screen name="Home" component={HomeScreen} />
-            <Screen name="Suche" component={SearchScreen} />
-            <Screen name="Leseliste" component={ReadingListScreen} />
+            {screensMapped}
         </Navigator>
     );
 };

@@ -12,11 +12,21 @@ type GoogleBookSearchItem = {
 type GoogleBookSearchItems = {
     [x: string]: GoogleBookSearchItem;
 };
+
+type BookQuotes = {
+    quote: string;
+    pageNumber?: number;
+    creationDate: number;
+};
+
 type ReadingListItem = { [x: string]: { creationDate: number } };
 export type StoredBook = {
     volumeInfo?: {
         imageLinks: {
             thumbnail: string;
+            extraLarge: string;
+            large: string;
+            medium: string;
         };
         title?: string;
         authors?: string[];
@@ -28,6 +38,7 @@ export type StoredBook = {
         pagesRead?: {
             [x: string]: number;
         };
+        storedQuotes: BookQuotes[];
     };
 };
 type StoredBooks = {

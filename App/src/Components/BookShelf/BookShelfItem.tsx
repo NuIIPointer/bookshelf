@@ -1,20 +1,25 @@
+import { useNavigation, useNavigationState } from '@react-navigation/native';
 import { Layout, Text, Button, Icon, useTheme, useStyleSheet } from '@ui-kitten/components';
 import React, { useContext } from 'react';
-import { StyleSheet, Image, ImageBackground } from 'react-native';
+import { StyleSheet, Image } from 'react-native';
 
 import { GoogleBookContext, StoredBook, BookSearchResult } from '../../Context/GoogleBooks.Context';
 import useStoredPageRecentReadingValue from '../../Helper/useStoredPageRecentReadingValue';
 import ProgressBar from '../ProgressBar/ProgressBar';
+import pagesIndex from '../../Screen/Pages';
 
 const BookListItem = ({
     item,
     onModalClick,
+    variant,
 }: {
     item: StoredBook & BookSearchResult;
     onModalClick: Function;
+    variant: 'small' | 'large';
 }) => {
     const { readingList, toggleReadingList, bookmarkList, toggleBookmarkList } =
         useContext(GoogleBookContext);
+    const navigation = useNavigation();
     const theme = useTheme();
     const activeFillColor = theme['color-basic-100'];
     const inactiveFillColor = theme['color-basic-100'];
@@ -22,7 +27,13 @@ const BookListItem = ({
 
     const insideReadingList = !!readingList[item.id];
     const insideBookmarkList = !!bookmarkList[item.id];
-    const thumbnail = item?.thumbnail || item?.volumeInfo?.imageLinks?.thumbnail || '';
+    const thumbnail =
+        item?.volumeInfo?.imageLinks?.extraLarge ||
+        item?.volumeInfo?.imageLinks?.large ||
+        item?.volumeInfo?.imageLinks?.medium ||
+        item?.volumeInfo?.imageLinks?.thumbnail ||
+        item?.thumbnail ||
+        '';
     const title = item?.title || item?.volumeInfo?.title || '';
     const titleShortened = title.substring(0, 30);
     const authors = item?.authors || item?.volumeInfo?.authors || [];
@@ -35,7 +46,10 @@ const BookListItem = ({
             {thumbnail && (
                 <Layout style={styles.thumbnailWrapper}>
                     {/* @ts-ignore: correct soruce structure */}
-                    <Image style={styles.thumbnail} source={{ uri: thumbnail }} />
+                    <Image
+                        style={{ ...styles.thumbnail, ...styles[`thumbnail${variant}`] }}
+                        source={{ uri: thumbnail }}
+                    />
                 </Layout>
             )}
             <Layout style={styles.infoContainer}>
@@ -104,6 +118,12 @@ const BookListItem = ({
                         )}
                     />
                 </Layout>
+                <Button
+                    onPress={() => {
+                        navigation.navigate(pagesIndex.bookDetails.name);
+                    }}>
+                    Text
+                </Button>
             </Layout>
         </Layout>
     );
@@ -127,15 +147,22 @@ const themedStyles = StyleSheet.create({
         borderRadius: 12,
     },
     thumbnail: {
+        borderRadius: 10,
+    },
+    thumbnaillarge: {
         width: 150,
         height: 200,
-        borderRadius: 10,
+    },
+    thumbnailsmall: {
+        width: 100,
+        height: 133.33,
     },
     infoContainer: {
         flex: 1,
         padding: 24,
         paddingRight: 0,
         borderRadius: 6,
+        backgroundColor: 'transparent',
     },
     title: {
         fontSize: 18,
